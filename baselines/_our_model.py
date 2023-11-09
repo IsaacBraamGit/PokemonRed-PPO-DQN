@@ -219,6 +219,8 @@ class DQNAgent:
 
         # Combine all variables into a single state array
         #Todo:player_pokemon_internal id to one hot, and enemy
+
+        # Todo: add nr of actions in this battle(like first move should probably be a to open fight menu)
         state = np.array([
             battle_status, player_pokemon_internal_id, our_lvl, our_hp,
             move1, move2, move3, move4, type1, type2, experience,
@@ -232,6 +234,7 @@ class DQNAgent:
         return np.reshape(state, [1, len(state)])
 
     def get_reward(self, next_state, state):
+        #health of opponent
         score = state[0][18] - next_state[0][18]
 
         print("score:",flush=True)
