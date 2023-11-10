@@ -27,8 +27,8 @@ def make_env(rank, env_conf, seed=0):
     return _init
 
 if __name__ == '__main__':
-
-    sess_path = Path(f'isaac_session_{str(uuid.uuid4())[:8]}')
+    sess_path = Path(f'isaac_session')
+    #sess_path = Path(f'isaac_session_{str(uuid.uuid4())[:8]}')
     ep_length = 2**23
 
     env_config = {
@@ -69,9 +69,9 @@ if __name__ == '__main__':
                 obs, rewards, terminated, truncated, info = env.step(action)
                 next_state = small_agent.get_state()
                 env.render()
-                if not (small_agent.state == next_state).all():
+                #if not (small_agent.state == next_state).all():
 
-                    small_agent.learn(action, terminated, truncated, next_state)
+                small_agent.learn(action, terminated, truncated, next_state)
 
             else:
                 action, _states = model.predict(obs, deterministic=False)

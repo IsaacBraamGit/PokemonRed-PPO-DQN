@@ -16,7 +16,7 @@ class DQNAgent:
         self.action_size = action_size
         self.memory = deque(maxlen=2000)
         self.gamma = 0.95    # discount rate
-        self.epsilon = 0.2  # exploration rate
+        self.epsilon = 0.9  # exploration rate
         self.epsilon_min = 0.01
         self.epsilon_decay = 0.995
         self.learning_rate = 0.1
@@ -104,6 +104,7 @@ class DQNAgent:
         # Update the exploration rate
         if self.epsilon > self.epsilon_min:
             self.epsilon *= self.epsilon_decay
+            print("EPSILON",self.epsilon)
         print("LEARNED")
 
     def load(self):
@@ -123,7 +124,7 @@ class DQNAgent:
         # Read all the memory addresses to create the state vector
         # todo: all in one call for speed, but save mapping somewhere
 
-        # todo: add stuff for knowing what move, menu we are selecting/hovering over
+        # todo: decompose things like move into damage, hit perc, additional effect, to have more generalisation, also for instance poke id
         battle_status = self.env.read_m(0xD057)
         player_pokemon_internal_id = self.env.read_m(0xCFC0)
         our_lvl = self.env.read_m(0xD18C)
@@ -222,10 +223,11 @@ class DQNAgent:
 
         # Todo: add nr of actions in this battle(like first move should probably be a to open fight menu)
         state = np.array([
-            battle_status, player_pokemon_internal_id, our_lvl, our_hp,
-            move1, move2, move3, move4, type1, type2, experience,
-            pp_move1, pp_move2, pp_move3, pp_move4, max_hp,
-            enemy_pokemon_internal_id, enemy_lvl, enemy_hp, enemy_max_hp, in_menu,in_text,slotbit1,slotbit2
+            battle_status, player_pokemon_internal_id, our_lvl, our_hp, move1,
+            move2, move3, move4, type1, type2,
+            experience, pp_move1, pp_move2, pp_move3, pp_move4,
+            max_hp, enemy_pokemon_internal_id, enemy_lvl, enemy_hp, enemy_max_hp,
+            in_menu,in_text,slotbit1,slotbit2
         ])
 
         # Normalize or preprocess the state array as necessary
@@ -237,6 +239,15 @@ class DQNAgent:
         #health of opponent
         score = state[0][18] - next_state[0][18]
 
+        #punishment for doing somehing that does nothing
+        if (state == next_state).all():
+           score -= 0.1
+
+        # running away is for cowards
+        if state[0][22] and state[0][23]:
+            score -=2
+
+        # todo: don't use a powerfull move when you don't have to, how do we make it worthwhile to switch?
         print("score:",flush=True)
         print(score,flush=True)
         return score
@@ -255,12 +266,15 @@ class DQNAgent:
             self.save(f"models/dqn_model_v{version_nr}_{self.e}.h5")
             print(f"Episode: {self.e} ")
 
-        if len(self.memory) > self.batch_size and self.e % 1 == 0:
+        if len(self.memory) > self.batch_size and self.e % 3 == 0:
             #self.replay(self.batch_size)
             self.executor.submit(self.replay,self.batch_size)
         if self.e % 500 == 0 and self.e != 0:
             self.save(f"models/dqn_model_v{version_nr}_{self.e}.h5")
         self.e += 1
+        #todo: reset env after a while, long enough?
+        if self.e % 100_000 == 0:
+           self.env.reset()
         print("e=",self.e, flush=True)
 
     def learn(self, action, terminated,truncated,next_state):
