@@ -7,7 +7,7 @@ import random
 from concurrent.futures import ThreadPoolExecutor
 import os
 import re
-version_nr = 1
+version_nr = 2
 load_model = True
 class DQNAgent:
     def __init__(self, action_size, env):
@@ -15,10 +15,10 @@ class DQNAgent:
 
         self.action_size = action_size
         self.memory = deque(maxlen=2000)
-        self.gamma = 0.95    # discount rate
-        self.epsilon = 0.0001  # exploration rate
+        self.gamma = 0.7   # discount rate
+        self.epsilon = 0.9  # exploration rate
         self.epsilon_min = 0.01
-        self.epsilon_decay = 0.9999
+        self.epsilon_decay = 0.991
         self.learning_rate = 0.1
         self.batch_size = 64
 
@@ -128,33 +128,36 @@ class DQNAgent:
         # todo: all in one call for speed, but save mapping somewhere
 
         # todo: decompose things like move into damage, hit perc, additional effect, to have more generalisation, also for instance poke id
-        battle_status = self.env.read_m(0xD057)
-        player_pokemon_internal_id = self.env.read_m(0xCFC0)
+        #battle_status = self.env.read_m(0xD057)
+        #player_pokemon_internal_id = self.env.read_m(0xCFC0)
         our_lvl = self.env.read_m(0xD18C)
-        our_hp = self.env.read_m(0xD16D)
-        move1 = self.env.read_m(0xD173)
-        move2 = self.env.read_m(0xD174)
-        move3 = self.env.read_m(0xD175)
-        move4 = self.env.read_m(0xD176)
+        #our_hp = self.env.read_m(0xD16D)
+        #move1 = self.env.read_m(0xD173)
+        #move2 = self.env.read_m(0xD174)
+        #move3 = self.env.read_m(0xD175)
+        #move4 = self.env.read_m(0xD176)
         type1 = self.env.read_m(0xD170)
         type2 = self.env.read_m(0xD171)
-        experience = self.env.read_m(0xD17B)
+        #experience = self.env.read_m(0xD17B)
         pp_move1 = self.env.read_m(0xD188)
         pp_move2 = self.env.read_m(0xD189)
         pp_move3 = self.env.read_m(0xD18A)
         pp_move4 = self.env.read_m(0xD18B)
-        max_hp = self.env.read_m(0xD18E)
-        enemy_pokemon_internal_id = self.env.read_m(0xCFD8)
-        enemy_lvl = self.env.read_m(0xCFF3)
+        #max_hp = self.env.read_m(0xD18E)
+        #enemy_pokemon_internal_id = self.env.read_m(0xCFD8)
+        #enemy_lvl = self.env.read_m(0xCFF3)
         enemy_hp = self.env.read_m(0xCFE7)
-        enemy_max_hp = self.env.read_m(0xCFF5)  # Enemy's Max HP
+        #enemy_max_hp = self.env.read_m(0xCFF5)  # Enemy's Max HP
 
-        party_count = self.env.read_m(0xD163)
+        #party_count = self.env.read_m(0xD163)
         #D007 - The enemy Pokémon's catch rate. This ranges from 0 to 255 ($00-$FF) and the higher it is the easier it is to catch the target Pokémon.
 
         y_position = self.env.read_m(0xCC24)
         x_position = self.env.read_m(0xCC25)
         selected_menu_item = self.env.read_m(0xCC26)
+        enemy_type1 = self.env.read_m(0xCFEA)  # Enemy's Type 1
+        enemy_type2 = self.env.read_m(0xCFEB)
+        """ 
         tile_hidden_by_cursor = self.env.read_m(0xCC27)
         last_menu_item_id = self.env.read_m(0xCC28)
         bitmask_key_port_current_menu = self.env.read_m(0xCC29)
@@ -167,7 +170,7 @@ class DQNAgent:
                     self.env.read_m(0xCC31) << 8)  # Combining two bytes into a pointer
         first_displayed_menu_item_id = self.env.read_m(0xCC36)
         item_highlighted_with_select = self.env.read_m(0xCC35)
-
+        """
         # mapping
         # todo: item menu, pokemon menu
         in_text = False
@@ -226,10 +229,9 @@ class DQNAgent:
 
         # Todo: add nr of actions in this battle(like first move should probably be a to open fight menu)
         state = np.array([
-            battle_status, player_pokemon_internal_id, our_lvl, our_hp, move1,
-            move2, move3, move4, type1, type2,
-            experience, pp_move1, pp_move2, pp_move3, pp_move4,
-            max_hp, enemy_pokemon_internal_id, enemy_lvl, enemy_hp, enemy_max_hp,
+            our_lvl, type1, type2, enemy_type1,enemy_type2,
+             pp_move1, pp_move2, pp_move3, pp_move4,
+             enemy_hp,
             in_menu,in_text,slotbit1,slotbit2
         ])
 
