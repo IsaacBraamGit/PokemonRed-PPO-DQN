@@ -16,7 +16,7 @@ class DQNAgent:
         self.action_size = action_size
         self.memory = deque(maxlen=2000)
         self.gamma = 0.95    # discount rate
-        self.epsilon = 0.9  # exploration rate
+        self.epsilon = 0.0001  # exploration rate
         self.epsilon_min = 0.01
         self.epsilon_decay = 0.9999
         self.learning_rate = 0.1
@@ -56,6 +56,9 @@ class DQNAgent:
         return model
 
     def remember(self, state, action, reward, next_state, done):
+        print((state, action, reward, next_state, done))
+        if reward> 0:
+            print("FFF")
         self.memory.append((state, action, reward, next_state, done))
 
     def act(self):
@@ -273,7 +276,7 @@ class DQNAgent:
             self.save(f"models/dqn_model_v{version_nr}_{self.e}.h5")
         self.e += 1
         #todo: reset env after a while, long enough?
-        if self.e % 100_000 == 0:
+        if self.e % 10_000 == 0:
            self.env.reset()
         print("e=",self.e, flush=True)
 

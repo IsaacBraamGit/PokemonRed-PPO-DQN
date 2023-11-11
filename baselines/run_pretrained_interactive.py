@@ -8,7 +8,7 @@ from stable_baselines3.common import env_checker
 from stable_baselines3.common.vec_env import DummyVecEnv, SubprocVecEnv
 from stable_baselines3.common.utils import set_random_seed
 from stable_baselines3.common.callbacks import CheckpointCallback
-
+import time
 OUR_SMALL_AGENT = True
 
 def make_env(rank, env_conf, seed=0):
@@ -32,9 +32,9 @@ if __name__ == '__main__':
     ep_length = 2**23
 
     env_config = {
-                'headless': True, 'save_final_state': False, 'early_stop': False,
+                'headless': False, 'save_final_state': False, 'early_stop': False,
                 'action_freq': 24, 'init_state': '../has_pokedex_nballs.state', 'max_steps': ep_length,
-                'print_rewards': True, 'save_video': False, 'fast_video': False, 'session_path': sess_path,
+                'print_rewards': False, 'save_video': False, 'fast_video': False, 'session_path': sess_path,
                 'gb_path': '../PokemonRed.gb', 'debug': False, 'sim_frame_dist': 2_000_000.0, 'extra_buttons': True
             }
     
@@ -50,29 +50,45 @@ if __name__ == '__main__':
         
     #keyboard.on_press_key("M", toggle_agent)
     obs, info = env.reset()
+    obs_last = obs
+    last_action_time = time.time()
     last_state = small_agent.state
+    action = 4  # pass action
     while True:
-        action = 7 # pass action
+
 
         try:
             with open("agent_enabled.txt", "r") as f:
                 agent_enabled = f.readlines()[0].startswith("yes")
         except:
             agent_enabled = True
+
+
         if agent_enabled:
             #1 is battle, 2 is trainer battle
             #enemy_hp = env.read_m(0xCFE7)
+
+
             battle_status = env.read_m(0xD057)
             if battle_status != 0 and OUR_SMALL_AGENT:
-                action = small_agent.act()
+                current_time = time.time()
+                time_elapsed = current_time - last_action_time
 
-                obs, rewards, terminated, truncated, info = env.step(action)
+
                 next_state = small_agent.get_state()
-                env.render()
-                #if not (small_agent.state == next_state).all():
 
-                small_agent.learn(action, terminated, truncated, next_state)
+                #env.render()
+                obs, rewards, terminated, truncated, info = env.step(7)
+                if not (last_state == next_state).all():
+                    last_state = next_state
+                    last_action_time = time.time()
 
+                if time_elapsed > 0.5:
+                    small_agent.learn(action, terminated, truncated, next_state)
+                    action = small_agent.act()
+                    obs, rewards, terminated, truncated, info = env.step(action)
+                    last_action_time = time.time()
+                    print("action ", action)
             else:
                 action, _states = model.predict(obs, deterministic=False)
                 obs, rewards, terminated, truncated, info = env.step(action)
