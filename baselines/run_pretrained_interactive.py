@@ -29,7 +29,7 @@ def make_env(rank, env_conf, seed=0):
 if __name__ == '__main__':
     sess_path = Path(f'isaac_session')
     #sess_path = Path(f'isaac_session_{str(uuid.uuid4())[:8]}')
-    ep_length = 2**23
+    ep_length = 2**230000
 
     env_config = {
                 'headless': True, 'save_'
@@ -56,6 +56,7 @@ if __name__ == '__main__':
     last_state = small_agent.state
     action = 4  # pass action
     step = 0
+    episodes = 0
     while True:
 
 
@@ -83,6 +84,7 @@ if __name__ == '__main__':
                     last_action_time = time.time()
 
                 if time_elapsed > 0.5:
+                    episodes +=1
                     small_agent.learn(action, terminated, truncated, next_state)
                     action = small_agent.act()
                     obs, rewards, terminated, truncated, info = env.step(action)
@@ -94,10 +96,14 @@ if __name__ == '__main__':
                     small_agent.update_target_model()
 
             else:
+                episodes +=1
                 action_big_model, _states = model.predict(obs, deterministic=False)
                 obs, rewards, terminated, truncated, info = env.step(action_big_model)
                 env.render()
                 action = 7 # action for
+                print(episodes)
+            if episodes % 30_000 == 0 and episodes != 0:
+                env.reset()
             if truncated:
                 break
         env.render()
