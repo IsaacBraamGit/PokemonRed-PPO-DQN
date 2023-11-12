@@ -65,9 +65,6 @@ if __name__ == '__main__':
 
 
         if agent_enabled:
-            #1 is battle, 2 is trainer battle
-            #enemy_hp = env.read_m(0xCFE7)
-
 
             battle_status = env.read_m(0xD057)
             if battle_status != 0 and OUR_SMALL_AGENT:
@@ -90,9 +87,10 @@ if __name__ == '__main__':
                     last_action_time = time.time()
                     print("action ", action)
             else:
-                action, _states = model.predict(obs, deterministic=False)
-                obs, rewards, terminated, truncated, info = env.step(action)
+                action_big_model, _states = model.predict(obs, deterministic=False)
+                obs, rewards, terminated, truncated, info = env.step(action_big_model)
                 env.render()
+                action = 7 # action for
             if truncated:
                 break
         env.render()

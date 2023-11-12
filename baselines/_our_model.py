@@ -7,19 +7,25 @@ import random
 from concurrent.futures import ThreadPoolExecutor
 import os
 import re
+
 version_nr = 2
 load_model = True
+def append_to_file(file_path, line):
+    with open(file_path, "a") as file:
+        file.write(line + "\n")
+
 class DQNAgent:
     def __init__(self, action_size, env):
         self.executor = ThreadPoolExecutor(max_workers=5)
 
         self.action_size = action_size
+        self.memory_total = []
         self.memory = deque(maxlen=2000)
-        self.gamma = 0.7   # discount rate
+        self.gamma = 0.7  # discount rate
         self.epsilon = 0.9  # exploration rate
         self.epsilon_min = 0.01
-        self.epsilon_decay = 0.991
-        self.learning_rate = 0.1
+        self.epsilon_decay = 0.9995
+        self.learning_rate = 1
         self.batch_size = 64
 
         self.env = env
@@ -28,6 +34,7 @@ class DQNAgent:
         self.state_size = len(self.state[0])
 
         self.model = self.load()
+        self.file_path = f"models/log_dqn_model_v{version_nr}.txt"  # Path to your log file
 
     def get_latest_version(self):
         max_e = -1
@@ -57,20 +64,33 @@ class DQNAgent:
 
     def remember(self, state, action, reward, next_state, done):
         print((state, action, reward, next_state, done))
-        if reward> 0:
+        if reward > 0:
             print("FFF")
+            self.memory.append((state, action, reward, next_state, done))
+            self.memory.append((state, action, reward, next_state, done))
+            self.memory.append((state, action, reward, next_state, done))
+            self.memory.append((state, action, reward, next_state, done))
+            self.memory.append((state, action, reward, next_state, done))
+            self.memory.append((state, action, reward, next_state, done))
+            self.memory.append((state, action, reward, next_state, done))
+            self.memory.append((state, action, reward, next_state, done))
+
         self.memory.append((state, action, reward, next_state, done))
 
+        line = str((self.e,state, action, reward, next_state, done))
+        append_to_file(self.file_path, line)
     def act(self):
         print("")
         print("act")
         self.state = self.get_state()
 
         if np.random.rand() <= self.epsilon:
-            return random.randrange(self.action_size)
-        act_values = self.model.predict(self.state,verbose=0)
-        print("action=",np.argmax(act_values[0]))
-        return np.argmax(act_values[0])
+            action =  random.randrange(self.action_size)
+        else:
+            act_values = self.model.predict(self.state, verbose=0)
+            action = np.argmax(act_values[0])
+        print("action=", action)
+        return action
 
     def replay(self, batch_size):
         minibatch = random.sample(self.memory, batch_size)
@@ -107,7 +127,7 @@ class DQNAgent:
         # Update the exploration rate
         if self.epsilon > self.epsilon_min:
             self.epsilon *= self.epsilon_decay
-            print("EPSILON",self.epsilon)
+            print("EPSILON", self.epsilon)
         print("LEARNED")
 
     def load(self):
@@ -128,29 +148,29 @@ class DQNAgent:
         # todo: all in one call for speed, but save mapping somewhere
 
         # todo: decompose things like move into damage, hit perc, additional effect, to have more generalisation, also for instance poke id
-        #battle_status = self.env.read_m(0xD057)
-        #player_pokemon_internal_id = self.env.read_m(0xCFC0)
+        # battle_status = self.env.read_m(0xD057)
+        # player_pokemon_internal_id = self.env.read_m(0xCFC0)
         our_lvl = self.env.read_m(0xD18C)
-        #our_hp = self.env.read_m(0xD16D)
-        #move1 = self.env.read_m(0xD173)
-        #move2 = self.env.read_m(0xD174)
-        #move3 = self.env.read_m(0xD175)
-        #move4 = self.env.read_m(0xD176)
+        # our_hp = self.env.read_m(0xD16D)
+        # move1 = self.env.read_m(0xD173)
+        # move2 = self.env.read_m(0xD174)
+        # move3 = self.env.read_m(0xD175)
+        # move4 = self.env.read_m(0xD176)
         type1 = self.env.read_m(0xD170)
         type2 = self.env.read_m(0xD171)
-        #experience = self.env.read_m(0xD17B)
+        # experience = self.env.read_m(0xD17B)
         pp_move1 = self.env.read_m(0xD188)
         pp_move2 = self.env.read_m(0xD189)
         pp_move3 = self.env.read_m(0xD18A)
         pp_move4 = self.env.read_m(0xD18B)
-        #max_hp = self.env.read_m(0xD18E)
-        #enemy_pokemon_internal_id = self.env.read_m(0xCFD8)
-        #enemy_lvl = self.env.read_m(0xCFF3)
+        # max_hp = self.env.read_m(0xD18E)
+        # enemy_pokemon_internal_id = self.env.read_m(0xCFD8)
+        # enemy_lvl = self.env.read_m(0xCFF3)
         enemy_hp = self.env.read_m(0xCFE7)
-        #enemy_max_hp = self.env.read_m(0xCFF5)  # Enemy's Max HP
+        # enemy_max_hp = self.env.read_m(0xCFF5)  # Enemy's Max HP
 
-        #party_count = self.env.read_m(0xD163)
-        #D007 - The enemy Pokémon's catch rate. This ranges from 0 to 255 ($00-$FF) and the higher it is the easier it is to catch the target Pokémon.
+        # party_count = self.env.read_m(0xD163)
+        # D007 - The enemy Pokémon's catch rate. This ranges from 0 to 255 ($00-$FF) and the higher it is the easier it is to catch the target Pokémon.
 
         y_position = self.env.read_m(0xCC24)
         x_position = self.env.read_m(0xCC25)
@@ -183,7 +203,6 @@ class DQNAgent:
         if x_position == 5:
             in_menu = False
             slot = selected_menu_item
-
 
         if x_position == 9:
             if selected_menu_item == 0:
@@ -225,14 +244,14 @@ class DQNAgent:
         # ...and so on for all other variables you want to track
 
         # Combine all variables into a single state array
-        #Todo:player_pokemon_internal id to one hot, and enemy
+        # Todo:player_pokemon_internal id to one hot, and enemy
 
         # Todo: add nr of actions in this battle(like first move should probably be a to open fight menu)
         state = np.array([
-            our_lvl, type1, type2, enemy_type1,enemy_type2,
-             pp_move1, pp_move2, pp_move3, pp_move4,
-             enemy_hp,
-            in_menu,in_text,slotbit1,slotbit2
+            our_lvl, type1, type2, enemy_type1, enemy_type2,
+            pp_move1, pp_move2, pp_move3, pp_move4,
+            enemy_hp,
+            in_menu, in_text, slotbit1, slotbit2
         ])
 
         # Normalize or preprocess the state array as necessary
@@ -241,20 +260,21 @@ class DQNAgent:
         return np.reshape(state, [1, len(state)])
 
     def get_reward(self, next_state, state):
-        #health of opponent
-        score = state[0][18] - next_state[0][18]
+        # health of opponent
+        score = state[0][9] - next_state[0][9]
 
-        #punishment for doing somehing that does nothing
+        # punishment for doing somehing that does nothing
         if (state == next_state).all():
-           score -= 0.1
+            score -= 0.1
 
         # running away is for cowards
-        if state[0][22] and state[0][23]:
-            score -=2
+        if state[0][12] and state[0][13]:
+            score -= 2
 
         # todo: don't use a powerfull move when you don't have to, how do we make it worthwhile to switch?
-        print("score:",flush=True)
-        print(score,flush=True)
+        print("score:", flush=True)
+        print(score, flush=True)
+        score = score * 100
         return score
 
     def async_learn(self, action, terminated, truncated, state, next_state):
@@ -272,21 +292,23 @@ class DQNAgent:
             print(f"Episode: {self.e} ")
 
         if len(self.memory) > self.batch_size and self.e % 3 == 0:
-            #self.replay(self.batch_size)
-            self.executor.submit(self.replay,self.batch_size)
+            # self.replay(self.batch_size)
+            self.executor.submit(self.replay, self.batch_size)
         if self.e % 2000 == 0 and self.e != 0:
             self.save(f"models/dqn_model_v{version_nr}_{self.e}.h5")
         self.e += 1
-        #todo: reset env after a while, long enough?
+        # todo: reset env after a while, long enough?
         if self.e % 10_000 == 0:
-           self.env.reset()
-        print("e=",self.e, flush=True)
+            self.env.reset()
+        print("e=", self.e, flush=True)
 
-    def learn(self, action, terminated,truncated,next_state):
+    def learn(self, action, terminated, truncated, next_state):
         state = self.state
-        #self.executor.submit(self.async_learn, action, terminated, truncated, state, next_state)
+        # self.executor.submit(self.async_learn, action, terminated, truncated, state, next_state)
+        if action == 7:
+            return
 
-        self.async_learn( action, terminated, truncated, state, next_state)
+        self.async_learn(action, terminated, truncated, state, next_state)
 
     """
 def chose_action(env):
