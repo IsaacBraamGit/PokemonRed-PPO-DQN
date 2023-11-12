@@ -8,7 +8,7 @@ from concurrent.futures import ThreadPoolExecutor
 import os
 import re
 
-version_nr = 2
+version_nr = 3
 load_model = True
 def append_to_file(file_path, line):
     with open(file_path, "a") as file:
@@ -86,7 +86,10 @@ class DQNAgent:
         self.state = self.get_state()
 
         if np.random.rand() <= self.epsilon:
-            action =  random.randrange(self.action_size)
+            if np.random.rand() <= self.epsilon/2:
+                action = 4
+            else:
+                action = random.randrange(self.action_size)
         else:
             act_values = self.model.predict(self.state, verbose=0)
             action = np.argmax(act_values[0])
