@@ -32,7 +32,8 @@ if __name__ == '__main__':
     ep_length = 2**23
 
     env_config = {
-                'headless': False, 'save_final_state': False, 'early_stop': False,
+                'headless': True, 'save_'
+                                  '.final_state': False, 'early_stop': False,
                 'action_freq': 24, 'init_state': '../has_pokedex_nballs.state', 'max_steps': ep_length,
                 'print_rewards': False, 'save_video': False, 'fast_video': False, 'session_path': sess_path,
                 'gb_path': '../PokemonRed.gb', 'debug': False, 'sim_frame_dist': 2_000_000.0, 'extra_buttons': True
@@ -54,6 +55,7 @@ if __name__ == '__main__':
     last_action_time = time.time()
     last_state = small_agent.state
     action = 4  # pass action
+    step = 0
     while True:
 
 
@@ -86,6 +88,11 @@ if __name__ == '__main__':
                     obs, rewards, terminated, truncated, info = env.step(action)
                     last_action_time = time.time()
                     print("action ", action)
+                    step += 1
+
+                if step % 400:
+                    small_agent.update_target_model()
+
             else:
                 action_big_model, _states = model.predict(obs, deterministic=False)
                 obs, rewards, terminated, truncated, info = env.step(action_big_model)

@@ -20,7 +20,7 @@ class DQNAgent:
 
         self.action_size = action_size
         self.memory_total = []
-        self.memory = deque(maxlen=2000)
+        self.memory = deque(maxlen=10000)
         self.gamma = 0.7  # discount rate
         self.epsilon = 0.9  # exploration rate
         self.epsilon_min = 0.01
@@ -34,6 +34,7 @@ class DQNAgent:
         self.state_size = len(self.state[0])
 
         self.model = self.load()
+        self.target_model = self._build_target_model()
         self.file_path = f"models/log_dqn_model_v{version_nr}.txt"  # Path to your log file
 
     def get_latest_version(self):
@@ -62,23 +63,23 @@ class DQNAgent:
                       optimizer=Adam(lr=self.learning_rate))
         return model
 
+    def _build_target_model(self):
+        # This model will be a clone of the main model, but with separate weights
+        # that get updated less frequently.
+        # This is a key part of the Double DQN algorithm.
+        model = self._build_model()
+        return model
+
+    def update_target_model(self):
+        self.target_model.set_weights(self.model.get_weights())
+
     def remember(self, state, action, reward, next_state, done):
-        print((state, action, reward, next_state, done))
-        if reward > 0:
-            print("FFF")
-            self.memory.append((state, action, reward, next_state, done))
-            self.memory.append((state, action, reward, next_state, done))
-            self.memory.append((state, action, reward, next_state, done))
-            self.memory.append((state, action, reward, next_state, done))
-            self.memory.append((state, action, reward, next_state, done))
-            self.memory.append((state, action, reward, next_state, done))
-            self.memory.append((state, action, reward, next_state, done))
-            self.memory.append((state, action, reward, next_state, done))
 
         self.memory.append((state, action, reward, next_state, done))
 
         line = str((self.e,state, action, reward, next_state, done))
         append_to_file(self.file_path, line)
+
     def act(self):
         print("")
         print("act")
@@ -99,17 +100,24 @@ class DQNAgent:
         states = np.array([t[0][0] for t in minibatch])
         next_states = np.array([t[3][0] for t in minibatch])
 
-        # Vectorized prediction for the current and next states
+        # Vectorized prediction for the current states using the main network
         q_values = self.model.predict(states)
-        q_values_next = self.model.predict(next_states)
+
+        # Double DQN Part: Here we use the target model for the next states
+        q_values_next = self.target_model.predict(next_states)
+        q_values_next_online = self.model.predict(
+            next_states)  # Get the Q-values from the online model for action selection
 
         # Preparing training data
         x_train = []
         y_train = []
 
         for i, (state, action, reward, next_state, done) in enumerate(minibatch):
-            # Update the target for the action based on whether the episode is done
-            target = reward if done else reward + self.gamma * np.amax(q_values_next[i])
+            # Double DQN Update: Choose the best action from the online model's Q-values
+            best_action = np.argmax(q_values_next_online[i])
+
+            # Use the chosen action to get the Q-value from the target model for the evaluation
+            target = reward if done else reward + self.gamma * q_values_next[i][best_action]
 
             # Update the q_values for the action taken
             q_values_current = q_values[i]
