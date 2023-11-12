@@ -260,6 +260,7 @@ class DQNAgent:
         return np.reshape(state, [1, len(state)])
 
     def get_reward(self, next_state, state):
+        # todo: how do we measure stat drops, so it is represented in the state, so we can learn it?
         # health of opponent
         score = state[0][9] - next_state[0][9]
 
