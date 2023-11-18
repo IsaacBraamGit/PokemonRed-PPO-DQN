@@ -109,7 +109,7 @@ class RedGymEnv(Env):
         self.screen = self.pyboy.botsupport_manager().screen()
 
         if not config['headless']:
-            self.pyboy.set_emulation_speed(6)
+            self.pyboy.set_emulation_speed(1)
             
         self.reset()
 
@@ -251,7 +251,11 @@ class RedGymEnv(Env):
             self.pyboy.tick()
         if self.save_video and self.fast_video:
             self.add_video_frame()
-    
+
+    def wait(self, num_steps):
+        for i in range(num_steps):
+            self.pyboy.tick()
+
     def add_video_frame(self):
         self.full_frame_writer.add_image(self.render(reduce_res=False, update_mem=False))
         self.model_frame_writer.add_image(self.render(reduce_res=True, update_mem=False))

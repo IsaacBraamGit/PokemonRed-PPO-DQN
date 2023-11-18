@@ -43,67 +43,48 @@ if __name__ == '__main__':
     small_agent = _our_model.DQNAgent(6, env)
     #env_checker.check_env(env)
     file_name = 'session_4da05e87_main_good/poke_439746560_steps.zip'
-        #'session_Isaac_32e86aec/poke_688128_steps.zip'
     
     print('\nloading checkpoint')
     model = PPO.load(file_name, env=env, custom_objects={'lr_schedule': 0, 'clip_range': 0})
-        
-    #keyboard.on_press_key("M", toggle_agent)
+
     obs, info = env.reset()
-    obs_last = obs
-    last_action_time = time.time()
-    last_state = small_agent.state
-    action = 4  # pass action
     step = 0
-    episodes = 0
+    agent_enabled = True
+    previous_battle_status = 0
+
     while True:
-
-
+        action = 7  # pass action
         try:
             with open("agent_enabled.txt", "r") as f:
                 agent_enabled = f.readlines()[0].startswith("yes")
         except:
-            agent_enabled = True
-
-
+            agent_enabled = False
         if agent_enabled:
-
             battle_status = env.read_m(0xD057)
+            state = small_agent.get_state()
             if battle_status != 0 and OUR_SMALL_AGENT:
-                current_time = time.time()
-                time_elapsed = current_time - last_action_time
-
-
+                if previous_battle_status == 0:
+                    env.wait(600)
+                action = small_agent.act(state)
+                obs, rewards, terminated, truncated, info = env.step(action)
+                env.wait(300)
                 next_state = small_agent.get_state()
-
-                #env.render()
-                obs, rewards, terminated, truncated, info = env.step(7)
-                if not (last_state == next_state).all():
-                    last_state = next_state
-                    last_action_time = time.time()
-
-                if time_elapsed > 0.5:
-                    episodes +=1
-                    small_agent.learn(action, terminated, truncated, next_state)
-                    action = small_agent.act()
-                    obs, rewards, terminated, truncated, info = env.step(action)
-                    last_action_time = time.time()
-                    print("action ", action)
-                    step += 1
-
+                small_agent.learn(action, terminated, truncated, state, next_state)
+                state = next_state
+                step += 1
                 if step % 400:
                     small_agent.update_target_model()
-
             else:
-                episodes +=1
-                action_big_model, _states = model.predict(obs, deterministic=False)
+                action_big_model, _states = model.predict(obs)
                 obs, rewards, terminated, truncated, info = env.step(action_big_model)
                 env.render()
-                action = 7 # action for
-                print(episodes)
-            if episodes % 30_000 == 0 and episodes != 0:
+                step += 1
+            if step % 30_000 == 0 and step != 0:
                 env.reset()
             if truncated:
                 break
+            previous_battle_status = battle_status
+        else:
+            obs, rewards, terminated, truncated, info = env.step(action)
         env.render()
     env.close()

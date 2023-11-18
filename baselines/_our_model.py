@@ -8,11 +8,14 @@ from concurrent.futures import ThreadPoolExecutor
 import os
 import re
 
-version_nr = 3
+version_nr = 4
 load_model = True
+
+
 def append_to_file(file_path, line):
     with open(file_path, "a") as file:
         file.write(line + "\n")
+
 
 class DQNAgent:
     def __init__(self, action_size, env):
@@ -22,16 +25,15 @@ class DQNAgent:
         self.memory_total = []
         self.memory = deque(maxlen=10000)
         self.gamma = 0.7  # discount rate
-        self.epsilon = 0.0009  # exploration rate
+        self.epsilon = 1  # exploration rate
         self.epsilon_min = 0.01
         self.epsilon_decay = 0.9995
         self.learning_rate = 1
         self.batch_size = 64
 
         self.env = env
-        self.state = self.get_state()
         self.e = 0
-        self.state_size = len(self.state[0])
+        self.state_size = len(self.get_state()[0])
 
         self.model = self.load()
         self.target_model = self._build_target_model()
@@ -80,20 +82,16 @@ class DQNAgent:
         line = str((self.e,state, action, reward, next_state, done))
         append_to_file(self.file_path, line)
 
-    def act(self):
-        print("")
-        print("act")
-        self.state = self.get_state()
-
+    def act(self, state):
         if np.random.rand() <= self.epsilon:
             if np.random.rand() <= self.epsilon/2:
                 action = 4
             else:
                 action = random.randrange(self.action_size)
         else:
-            act_values = self.model.predict(self.state, verbose=0)
+            act_values = self.model.predict(state, verbose=0)
             action = np.argmax(act_values[0])
-        print("action=", action)
+        print("action:", action)
         return action
 
     def replay(self, batch_size):
@@ -168,7 +166,9 @@ class DQNAgent:
         # move3 = self.env.read_m(0xD175)
         # move4 = self.env.read_m(0xD176)
         type1 = self.env.read_m(0xD170)
+        type1_2 = self.env.read_m(0xD019)
         type2 = self.env.read_m(0xD171)
+        type2_2 = self.env.read_m(0xD01A)
         # experience = self.env.read_m(0xD17B)
         pp_move1 = self.env.read_m(0xD188)
         pp_move2 = self.env.read_m(0xD189)
@@ -289,7 +289,7 @@ class DQNAgent:
         score = score * 100
         return score
 
-    def async_learn(self, action, terminated, truncated, state, next_state):
+    def learn(self, action, terminated, truncated, state, next_state):
         done = False
         if terminated or truncated:
             done = True
@@ -314,13 +314,6 @@ class DQNAgent:
             self.env.reset()
         print("e=", self.e, flush=True)
 
-    def learn(self, action, terminated, truncated, next_state):
-        state = self.state
-        # self.executor.submit(self.async_learn, action, terminated, truncated, state, next_state)
-        if action == 7:
-            return
-
-        self.async_learn(action, terminated, truncated, state, next_state)
 
     """
 def chose_action(env):
