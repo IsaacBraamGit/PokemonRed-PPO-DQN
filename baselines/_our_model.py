@@ -66,9 +66,6 @@ class DQNAgent:
         return model
 
     def _build_target_model(self):
-        # This model will be a clone of the main model, but with separate weights
-        # that get updated less frequently.
-        # This is a key part of the Double DQN algorithm.
         model = self._build_model()
         return model
 
@@ -166,9 +163,7 @@ class DQNAgent:
         # move3 = self.env.read_m(0xD175)
         # move4 = self.env.read_m(0xD176)
         type1 = self.env.read_m(0xD170)
-        type1_2 = self.env.read_m(0xD019)
         type2 = self.env.read_m(0xD171)
-        type2_2 = self.env.read_m(0xD01A)
         # experience = self.env.read_m(0xD17B)
         pp_move1 = self.env.read_m(0xD188)
         pp_move2 = self.env.read_m(0xD189)
