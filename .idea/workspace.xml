@@ -5,19 +5,23 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="2af7fbdf-27c0-4c0b-a3d9-bb7b6f466e36" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/PokemonRedExperiments-master.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/PokemonRedExperiments-master.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/profiles_settings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/profiles_settings.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/baselines/util.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/baselines/_our_model.py" beforeDir="false" afterPath="$PROJECT_DIR$/baselines/_our_model.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/baselines/red_gym_env.py" beforeDir="false" afterPath="$PROJECT_DIR$/baselines/red_gym_env.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/baselines/models/log_dqn_model_v4.txt" beforeDir="false" afterPath="$PROJECT_DIR$/baselines/models/log_dqn_model_v4.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/baselines/run_pretrained_interactive.py" beforeDir="false" afterPath="$PROJECT_DIR$/baselines/run_pretrained_interactive.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Python Script" />
+      </list>
+    </option>
   </component>
   <component name="Git.Settings">
     <option name="RECENT_BRANCH_BY_REPOSITORY">
@@ -37,6 +41,7 @@
   </component>
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "SHARE_PROJECT_CONFIGURATION_FILES": "true",
     "WebServerToolWindowFactoryState": "false",
@@ -46,7 +51,7 @@
     "node.js.selected.package.eslint": "(autodetect)",
     "node.js.selected.package.tslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "com.github.copilot.settings.ApplicationConfigurable",
+    "settings.editor.selected.configurable": "preferences.pluginManager",
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
@@ -143,6 +148,7 @@
       <workItem from="1699963931968" duration="7512000" />
       <workItem from="1700329473362" duration="253000" />
       <workItem from="1700329737417" duration="14905000" />
+      <workItem from="1700424791195" duration="2708000" />
     </task>
     <servers />
   </component>
@@ -150,8 +156,9 @@
     <option name="version" value="3" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
+    <SUITE FILE_PATH="coverage/PokemonRedExperiments_master$test.coverage" NAME="test Coverage Results" MODIFIED="1699709092279" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/PokemonRedExperiments_master$_our_model.coverage" NAME="_our_model Coverage Results" MODIFIED="1699969919110" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/baselines" />
     <SUITE FILE_PATH="coverage/PokemonRedExperiments_master$red_gym_env.coverage" NAME="red_gym_env Coverage Results" MODIFIED="1699969924577" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/baselines" />
-    <SUITE FILE_PATH="coverage/PokemonRedExperiments_master$run_pretrained_interactive.coverage" NAME="run_pretrained_interactive Coverage Results" MODIFIED="1700345589083" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/baselines" />
+    <SUITE FILE_PATH="coverage/PokemonRedExperiments_master$run_pretrained_interactive.coverage" NAME="run_pretrained_interactive Coverage Results" MODIFIED="1700425422578" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/baselines" />
   </component>
 </project>
