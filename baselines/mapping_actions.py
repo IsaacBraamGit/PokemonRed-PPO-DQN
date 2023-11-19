@@ -29,8 +29,8 @@ class action_mapper:
         7: ["m2", 4, "p4", 4, 4],  # pokemon 4
         8: ["m2", 4, "p5", 4, 4],  # pokemon 5
         9: ["m2", 4, "p6", 4, 4], # pokemon 6
-        10: ["m4", 4]              # run
-        # 12: ["m3", 4,"b1"]       # pokeball
+        10: ["m4", 4],       # run
+        11: ["m3", 4, 4]       # pokeball
         # 13: ["m3", 4, "b2"]      # healing
         }
 
@@ -84,20 +84,20 @@ class action_mapper:
             while want < self.fight_menu :
                 #down
                 self.append(0)
-                self.fight_menu += 1
+                self.fight_menu -= 1
             return list
 
         if letter == "p":
-            if self.menu == want:
+            if self.pokemon_menu == want:
                 return list
             while want > self.pokemon_menu :
                 #up
                 self.append(3)
-                self.fight_menu += 1
+                self.pokemon_menu += 1
             while want < self.pokemon_menu :
                 #down
                 self.append(0)
-                self.fight_menu += 1
+                self.pokemon_menu -= 1
             return list
 
 
