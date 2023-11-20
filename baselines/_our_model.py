@@ -7,8 +7,9 @@ import random
 from concurrent.futures import ThreadPoolExecutor
 import os
 import re
+import mappings
 
-version_nr = 4
+version_nr = 1.0
 load_model = True
 
 
@@ -18,10 +19,12 @@ def append_to_file(file_path, line):
 
 
 class DQNAgent:
-    def __init__(self, action_size, env):
+    def __init__(self, env):
         self.executor = ThreadPoolExecutor(max_workers=5)
 
-        self.action_size = action_size
+        self.action_mapper = mappings.ActionMapper()
+        self.state_mapper = mappings.StateMapper()
+        self.action_size = self.action_mapper.action_size
         self.memory_total = []
         self.memory = deque(maxlen=10000)
         self.gamma = 0.7  # discount rate
@@ -79,17 +82,47 @@ class DQNAgent:
         line = str((self.e,state, action, reward, next_state, done))
         append_to_file(self.file_path, line)
 
-    def act(self, state):
+    def act(self, state, test=False):
         if np.random.rand() <= self.epsilon:
-            if np.random.rand() <= self.epsilon/2:
-                action = 4
-            else:
-                action = random.randrange(self.action_size)
+            action = random.randrange(self.action_size)
         else:
             act_values = self.model.predict(state, verbose=0)
             action = np.argmax(act_values[0])
+        print(state)
+
+        if test:
+            user_input = input("Please enter a number: ")
+            action = int(user_input)
+
+        print(action)
+        if not self.get_action_validity(action):
+            print("not valid")
+            action = 12  # pass if not valid
+
         print("action:", action)
-        return action
+        action_list = self.action_mapper.get_action_sequence(action)
+        print("action_list", action_list)
+
+        return action, action_list
+
+    def get_action_validity(self, action: int) -> bool:
+        if 0 <= action <= 3:
+            # Only actions with PP > 0 are valid
+            return self.state_mapper.get_feature_value(self.env, f"in_battle_player_pp_move{action + 1}") > 0
+        if 4 <= action <= 9:
+            current_pokemon = self.state_mapper.get_current_pokemon(self.env)
+            is_switching = action - 3 != current_pokemon
+            if not is_switching:
+                return False
+            # If switching, check if the target Pokémon exists
+            target_pokemon_nr = self.state_mapper.get_feature_value(self.env, f"player_pokemon{action - 3}_pokemon_nr")
+            return target_pokemon_nr > 0
+        if action == 10:
+            # Only valid if battle type is not wild
+            return self.state_mapper.get_feature_value(self.env, "in_battle_type_of_battle") != 1
+        if action == 11:
+            # Only valid if more than 0 pokeballs are available
+            return self.state_mapper.get_number_of_pokeballs(self.env) > 0
 
     def replay(self, batch_size):
         minibatch = random.sample(self.memory, batch_size)
@@ -141,7 +174,7 @@ class DQNAgent:
         # todo, save and load model vars, like e and epsilon
         if load_model:
             name = self.get_latest_version()
-            if name != None:
+            if name is not None:
                 model.load_weights(name)
 
         return model
@@ -150,53 +183,20 @@ class DQNAgent:
         self.model.save_weights(name)
 
     def get_state(self):
-        # Read all the memory addresses to create the state vector
-        # todo: all in one call for speed, but save mapping somewhere
+        feature_values = self.state_mapper.get_feature_values(self.env)
+        wanted_feature_types = ["in_battle",
+                                # "player",
+                                "enemy_pokemon1",
+                                "items_item_1_quantity"]
+        state = [v for k, v in feature_values.items() if any([k.startswith(t) for t in wanted_feature_types])]
 
         # todo: decompose things like move into damage, hit perc, additional effect, to have more generalisation, also for instance poke id
-        # battle_status = self.env.read_m(0xD057)
-        # player_pokemon_internal_id = self.env.read_m(0xCFC0)
-        our_lvl = self.env.read_m(0xD18C)
-        # our_hp = self.env.read_m(0xD16D)
-        # move1 = self.env.read_m(0xD173)
-        # move2 = self.env.read_m(0xD174)
-        # move3 = self.env.read_m(0xD175)
-        # move4 = self.env.read_m(0xD176)
-        type1 = self.env.read_m(0xD170)
-        type2 = self.env.read_m(0xD171)
-        # experience = self.env.read_m(0xD17B)
-        pp_move1 = self.env.read_m(0xD188)
-        pp_move2 = self.env.read_m(0xD189)
-        pp_move3 = self.env.read_m(0xD18A)
-        pp_move4 = self.env.read_m(0xD18B)
-        # max_hp = self.env.read_m(0xD18E)
-        # enemy_pokemon_internal_id = self.env.read_m(0xCFD8)
-        # enemy_lvl = self.env.read_m(0xCFF3)
-        enemy_hp = self.env.read_m(0xCFE7)
-        # enemy_max_hp = self.env.read_m(0xCFF5)  # Enemy's Max HP
-
-        # party_count = self.env.read_m(0xD163)
-        # D007 - The enemy Pokémon's catch rate. This ranges from 0 to 255 ($00-$FF) and the higher it is the easier it is to catch the target Pokémon.
+        # todo: feature engineering with hp, type, status, etc
 
         y_position = self.env.read_m(0xCC24)
         x_position = self.env.read_m(0xCC25)
         selected_menu_item = self.env.read_m(0xCC26)
-        enemy_type1 = self.env.read_m(0xCFEA)  # Enemy's Type 1
-        enemy_type2 = self.env.read_m(0xCFEB)
-        """ 
-        tile_hidden_by_cursor = self.env.read_m(0xCC27)
-        last_menu_item_id = self.env.read_m(0xCC28)
-        bitmask_key_port_current_menu = self.env.read_m(0xCC29)
-        previously_selected_menu_item = self.env.read_m(0xCC2A)
-        last_cursor_position_party_pc = self.env.read_m(0xCC2B)
-        last_cursor_position_item_screen = self.env.read_m(0xCC2C)
-        last_cursor_position_start_battle_menu = self.env.read_m(0xCC2D)
-        current_pokemon_index_party = self.env.read_m(0xCC2F)
-        pointer_cursor_tile_buffer = self.env.read_m(0xCC30) + (
-                    self.env.read_m(0xCC31) << 8)  # Combining two bytes into a pointer
-        first_displayed_menu_item_id = self.env.read_m(0xCC36)
-        item_highlighted_with_select = self.env.read_m(0xCC35)
-        """
+
         # mapping
         # todo: item menu, pokemon menu
         in_text = False
@@ -230,38 +230,14 @@ class DQNAgent:
             slotbit2 = 1
         else:
             slotbit2 = 0
-        """
-        print(in_text,in_menu,slot,"y_position",y_position,
-            "x_position", x_position,
-            "selected_menu_item", selected_menu_item,
-            "tile_hidden_by_cursor", tile_hidden_by_cursor,
-            "last_menu_item_id", last_menu_item_id,
-            "bitmask_key_port_current_menu", bitmask_key_port_current_menu,
-            "previously_selected_menu_item", previously_selected_menu_item,
-            "last_cursor_position_party_pc", last_cursor_position_party_pc,
-            "last_cursor_position_item_screen", last_cursor_position_item_screen,
-            "last_cursor_position_start_battle_menu", last_cursor_position_start_battle_menu,
-            "current_pokemon_index_party", current_pokemon_index_party,
-            "pointer_cursor_tile_buffer", pointer_cursor_tile_buffer,
-            "first_displayed_menu_item_id", first_displayed_menu_item_id,
-            "item_highlighted_with_select", item_highlighted_with_select
-        )
-        """
-        # ...and so on for all other variables you want to track
 
-        # Combine all variables into a single state array
         # Todo:player_pokemon_internal id to one hot, and enemy
-
         # Todo: add nr of actions in this battle(like first move should probably be a to open fight menu)
-        state = np.array([
-            our_lvl, type1, type2, enemy_type1, enemy_type2,
-            pp_move1, pp_move2, pp_move3, pp_move4,
-            enemy_hp,
+        # Todo: state normalization
+
+        state.extend([
             in_menu, in_text, slotbit1, slotbit2
         ])
-
-        # Normalize or preprocess the state array as necessary
-        # For example, state = state / np.max(state) if you want to normalize
 
         return np.reshape(state, [1, len(state)])
 

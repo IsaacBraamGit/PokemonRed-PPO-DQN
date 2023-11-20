@@ -30,10 +30,10 @@ if __name__ == '__main__':
                 'print_rewards': False, 'save_video': False, 'fast_video': False, 'session_path': sess_path,
                 'gb_path': '../PokemonRed.gb', 'debug': False, 'sim_frame_dist': 2_000_000.0, 'extra_buttons': True
             }
-    
-    num_cpu = 1 #64 #46 # Also sets the number of episodes per training iteration
-    env = make_env(env_config)() #SubprocVecEnv([make_env(i, env_config) for i in range(num_cpu)])
-    small_agent = _our_model.DQNAgent(6, env)
+
+    num_cpu = 1  # 64 #46 # Also sets the number of episodes per training iteration
+    env = make_env(env_config)()  # SubprocVecEnv([make_env(i, env_config) for i in range(num_cpu)])
+    small_agent = _our_model.DQNAgent(env)
     file_name = 'session_4da05e87_main_good/poke_439746560_steps.zip'
     
     print('\nloading checkpoint')
@@ -56,6 +56,8 @@ if __name__ == '__main__':
             if battle_status != 0 and OUR_SMALL_AGENT:
                 if previous_battle_status == 0:
                     env.wait(360)
+                    env.step(4)
+                    env.wait(360)
                 action, action_list = small_agent.act(state)
                 _, rewards, terminated, truncated, _ = perform_actions_in_env(action_list, env)
                 # TODO think about how to handle rewards to compare to the big model
@@ -75,6 +77,8 @@ if __name__ == '__main__':
             if truncated:
                 break
             previous_battle_status = battle_status
+            if previous_battle_status == 1 and battle_status == 0:
+                small_agent.action_mapper.reset()
         else:
             obs, rewards, terminated, truncated, info = env.step(action)
         env.render()
