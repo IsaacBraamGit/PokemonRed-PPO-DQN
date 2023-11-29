@@ -184,11 +184,82 @@ class DQNAgent:
 
     def get_state(self):
         feature_values = self.state_mapper.get_feature_values(self.env)
-        wanted_feature_types = ["in_battle",
-                                # "player",
-                                "enemy_pokemon1",
-                                "items_item_1_quantity"]
-        state = [v for k, v in feature_values.items() if any([k.startswith(t) for t in wanted_feature_types])]
+
+        # Player Pokemon in battle
+        player_current_hp = feature_values["in_battle_player_hp"]
+        player_max_hp = feature_values["in_battle_player_max_hp"]
+        player_status = self.state_mapper.get_player_status(self.env)
+        pp_move1 = feature_values["in_battle_player_pp_move1"]
+        pp_move2 = feature_values["in_battle_player_pp_move2"]
+        pp_move3 = feature_values["in_battle_player_pp_move3"]
+        pp_move4 = feature_values["in_battle_player_pp_move4"]
+        player_attack = feature_values["in_battle_player_attack"]
+        player_defense = feature_values["in_battle_player_defense"]
+        player_speed = feature_values["in_battle_player_speed"]
+        player_special = feature_values["in_battle_player_special"]
+        player_type1 = feature_values["in_battle_player_type1"]
+        player_type2 = feature_values["in_battle_player_type2"]
+
+        state = [
+            player_current_hp, player_max_hp, *player_status, pp_move1, pp_move2, pp_move3, pp_move4, player_attack,
+            player_defense, player_speed, player_special
+        ]
+
+        # Enemy in battle
+        enemy_current_hp = feature_values["in_battle_enemy_hp"]
+        enemy_max_hp = feature_values["in_battle_enemy_max_hp"]
+        enemy_status = self.state_mapper.get_enemy_status(self.env)
+        enemy_attack = feature_values["in_battle_enemy_attack"]
+        enemy_defense = feature_values["in_battle_enemy_defense"]
+        enemy_speed = feature_values["in_battle_enemy_speed"]
+        enemy_special = feature_values["in_battle_enemy_special"]
+        enemy_type1 = feature_values["in_battle_enemy_type1"]
+        enemy_type2 = feature_values["in_battle_enemy_type2"]
+
+        state.extend([
+            enemy_current_hp, enemy_max_hp, enemy_status, enemy_attack, enemy_defense, enemy_speed, enemy_special
+        ])
+
+        # Player Pokemon out of battle
+        for i in range(1, 7):
+            pokemon_hp = feature_values[f"player_pokemon{i}_hp"]
+            pokemon_max_hp = feature_values[f"player_pokemon{i}_max_hp"]
+            pokemon_type1 = feature_values[f"player_pokemon{i}_type1"]
+            pokemon_type2 = feature_values[f"player_pokemon{i}_type2"]
+            pokemon_effectiveness = self.state_mapper.get_pokemon_effectiveness(pokemon_type1, pokemon_type2,
+                                                                                enemy_type1, enemy_type2)
+
+            state.extend([
+                pokemon_hp, pokemon_max_hp, pokemon_effectiveness
+            ])
+
+        # Enemy Pokemon out of battle
+        for i in range(1, 7):
+            pokemon_hp = feature_values[f"enemy_pokemon{i}_hp"]
+            pokemon_max_hp = feature_values[f"enemy_pokemon{i}_max_hp"]
+            pokemon_type1 = feature_values[f"enemy_pokemon{i}_type1"]
+            pokemon_type2 = feature_values[f"enemy_pokemon{i}_type2"]
+            pokemon_effectiveness = self.state_mapper.get_pokemon_effectiveness(pokemon_type1, pokemon_type2,
+                                                                                player_type1, player_type2)
+
+            state.extend([
+                pokemon_hp, pokemon_max_hp, pokemon_effectiveness
+            ])
+
+        # Player current moves
+        for i in range(1, 5):
+            move_details = self.state_mapper.get_move_details(feature_values[f"in_battle_player_move{i}"])
+            move_power = move_details["Power"]
+            move_accuracy = move_details["Accuracy"]
+            move_type = move_details[f"Type"]
+            for i in range(1, 5):
+                enemy_move_type = self.state_mapper.get_move_details(
+                    self.state_mapper.get_move_details(feature_values[f"in_battle_enemy_move{i}"]["Type"]))
+                move_effectiveness = self.state_mapper.get_move_effectiveness(move_type, enemy_move_type)
+                state.append(move_effectiveness)
+            state.extend([
+                move_power, move_accuracy
+            ])
 
         # todo: decompose things like move into damage, hit perc, additional effect, to have more generalisation, also for instance poke id
         # todo: feature engineering with hp, type, status, etc

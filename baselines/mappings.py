@@ -1,3 +1,5 @@
+import pandas as pd
+
 """
 valid_actions = [
     WindowEvent.PRESS_ARROW_DOWN,
@@ -19,19 +21,19 @@ class ActionMapper:
         self.pokemon_nr = 1
 
         self.actions = {
-            0: ["m1", 4, "f1", 4, 4],     # attack 1
-            1: ["m1", 4, "f2", 4, 4],     # attack 2
-            2: ["m1", 4, "f3", 4, 4],     # attack 3
-            3: ["m1", 4, "f4", 4, 4],     # attack 4
+            0: ["m1", 4, "f1", 4, 4],  # attack 1
+            1: ["m1", 4, "f2", 4, 4],  # attack 2
+            2: ["m1", 4, "f3", 4, 4],  # attack 3
+            3: ["m1", 4, "f4", 4, 4],  # attack 4
             4: ["m2", 4, "p1", 4, 4, 4],  # pokemon 1
             5: ["m2", 4, "p2", 4, 4, 4],  # pokemon 2
             6: ["m2", 4, "p3", 4, 4, 4],  # pokemon 3
             7: ["m2", 4, "p4", 4, 4, 4],  # pokemon 4
             8: ["m2", 4, "p5", 4, 4, 4],  # pokemon 5
             9: ["m2", 4, "p6", 4, 4, 4],  # pokemon 6
-            10: ["m4", 4, 4],             # run
-            11: ["m3", 4, 4, 4],          # pokeball
-            12: [7]                       # pass
+            10: ["m4", 4, 4],  # run
+            11: ["m3", 4, 4, 4],  # pokeball
+            12: [7]  # pass
             # 13: ["m3", 4, "b2"]         # healing
         }
 
@@ -116,8 +118,14 @@ class StateMapper:
                 "player": {
                     "pokemon_nr": 0xD014,
                     "current_hp": [0xD015, 0xD016],  # Range
-                    "status": 0xD018,
                     "level": 0xD022,
+                    "status": 0xD018,
+                    "type_1": 0xD019,
+                    "type_2": 0xD01A,
+                    "move_1": 0xD01C,
+                    "move_2": 0xD01D,
+                    "move_3": 0xD01E,
+                    "move_4": 0xD01F,
                     "max_hp": [0xD023, 0xD024],  # Range
                     "attack": [0xD025, 0xD026],  # Range
                     "defense": [0xD027, 0xD028],  # Range
@@ -133,6 +141,10 @@ class StateMapper:
                     "status": 0xCFE9,
                     "type_1": 0xCFEA,
                     "type_2": 0xCFEB,
+                    "move_1": 0xCFED,
+                    "move_2": 0xCFEE,
+                    "move_3": 0xCFEF,
+                    "move_4": 0xCFF0,
                     "max_hp": [0xCFF4, 0xCFF5],  # Range
                     "attack": [0xCFF6, 0xCFF7],  # Range
                     "defense": [0xCFF8, 0xCFF9],  # Range
@@ -544,8 +556,246 @@ class StateMapper:
         }
         self.type_mappings = {
             0: "Normal",
+            1: "Fighting",
             2: "Flying",
+            3: "Poison",
+            4: "Ground",
+            5: "Rock",
+            6: "Bug",
+            7: "Ghost",
+            20: "Fire",
+            21: "Water",
+            22: "Grass",
+            23: "Electric",
+            24: "Psychic",
+            25: "Ice",
+            26: "Dragon"
         }
+
+        # Type strings
+        types = list(self.type_mappings.values())
+
+        # Effectiveness chart
+        effectiveness_chart = [
+            [1, 1, 1, 1, 1, 0.5, 1, 0, 1, 1, 1, 1, 1, 1, 1],  # Normal
+            [2, 1, 0.5, 0.5, 1, 2, 0.5, 0, 1, 1, 1, 1, 0.5, 2, 1],  # Fighting
+            [1, 2, 1, 1, 1, 0.5, 2, 1, 1, 1, 2, 0.5, 1, 1, 1],  # Flying
+            [1, 1, 1, 0.5, 0.5, 0.5, 2, 0.5, 1, 1, 2, 1, 1, 1, 1],  # Poison
+            [1, 1, 0, 2, 1, 2, 0.5, 1, 2, 1, 0.5, 2, 1, 1, 1],  # Ground
+            [1, 0.5, 2, 1, 0.5, 1, 2, 1, 2, 1, 1, 1, 1, 2, 1],  # Rock
+            [1, 0.5, 0.5, 2, 1, 1, 1, 0.5, 0.5, 1, 2, 1, 2, 1, 1],  # Bug
+            [0, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 0, 1, 1, 1],  # Ghost
+            [1, 1, 1, 1, 1, 0.5, 2, 1, 0.5, 0.5, 2, 1, 1, 2, 0.5],  # Fire
+            [1, 1, 1, 1, 2, 2, 1, 1, 2, 0.5, 0.5, 1, 1, 1, 0.5],  # Water
+            [1, 1, 0.5, 0.5, 2, 2, 0.5, 1, 0.5, 2, 0.5, 1, 1, 1, 0.5],  # Grass
+            [1, 1, 2, 1, 0, 1, 1, 1, 1, 2, 0.5, 0.5, 1, 1, 0.5],  # Electric
+            [1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0.5, 1, 1],  # Psychic
+            [1, 1, 2, 1, 2, 1, 1, 1, 1, 0.5, 2, 1, 1, 0.5, 2],  # Ice
+            [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1]  # Dragon
+        ]
+
+        self.effectiveness = pd.DataFrame(effectiveness_chart, index=types, columns=types)
+
+        self.move_mappings = {1: 'Pound', 2: 'Karate Chop', 3: 'Double Slap', 4: 'Comet Punch', 5: 'Mega Punch',
+                              6: 'Pay Day', 7: 'Fire Punch', 8: 'Ice Punch', 9: 'Thunder Punch', 10: 'Scratch',
+                              11: 'Vise Grip', 12: 'Guillotine', 13: 'Razor Wind', 14: 'Swords Dance', 15: 'Cut',
+                              16: 'Gust', 17: 'Wing Attack', 18: 'Whirlwind', 19: 'Fly', 20: 'Bind', 21: 'Slam',
+                              22: 'Vine Whip', 23: 'Stomp', 24: 'Double Kick', 25: 'Mega Kick', 26: 'Jump Kick',
+                              27: 'Rolling Kick', 28: 'Sand Attack', 29: 'Headbutt', 30: 'Horn Attack',
+                              31: 'Fury Attack', 32: 'Horn Drill', 33: 'Tackle', 34: 'Body Slam', 35: 'Wrap',
+                              36: 'Take Down', 37: 'Thrash', 38: 'Double-Edge', 39: 'Tail Whip', 40: 'Poison Sting',
+                              41: 'Twineedle', 42: 'Pin Missile', 43: 'Leer', 44: 'Bite', 45: 'Growl', 46: 'Roar',
+                              47: 'Sing', 48: 'Supersonic', 49: 'Sonic Boom', 50: 'Disable', 51: 'Acid', 52: 'Ember',
+                              53: 'Flamethrower', 54: 'Mist', 55: 'Water Gun', 56: 'Hydro Pump', 57: 'Surf',
+                              58: 'Ice Beam', 59: 'Blizzard', 60: 'Psybeam', 61: 'Bubble Beam', 62: 'Aurora Beam',
+                              63: 'Hyper Beam', 64: 'Peck', 65: 'Drill Peck', 66: 'Submission', 67: 'Low Kick',
+                              68: 'Counter', 69: 'Seismic Toss', 70: 'Strength', 71: 'Absorb', 72: 'Mega Drain',
+                              73: 'Leech Seed', 74: 'Growth', 75: 'Razor Leaf', 76: 'Solar Beam', 77: 'Poison Powder',
+                              78: 'Stun Spore', 79: 'Sleep Powder', 80: 'Petal Dance', 81: 'String Shot',
+                              82: 'Dragon Rage', 83: 'Fire Spin', 84: 'Thunder Shock', 85: 'Thunderbolt',
+                              86: 'Thunder Wave', 87: 'Thunder', 88: 'Rock Throw', 89: 'Earthquake', 90: 'Fissure',
+                              91: 'Dig', 92: 'Toxic', 93: 'Confusion', 94: 'Psychic', 95: 'Hypnosis', 96: 'Meditate',
+                              97: 'Agility', 98: 'Quick Attack', 99: 'Rage', 100: 'Teleport', 101: 'Night Shade',
+                              102: 'Mimic', 103: 'Screech', 104: 'Double Team', 105: 'Recover', 106: 'Harden',
+                              107: 'Minimize', 108: 'Smokescreen', 109: 'Confuse Ray', 110: 'Withdraw',
+                              111: 'Defense Curl', 112: 'Barrier', 113: 'Light Screen', 114: 'Haze', 115: 'Reflect',
+                              116: 'Focus Energy', 117: 'Bide', 118: 'Metronome', 119: 'Mirror Move',
+                              120: 'Self-Destruct', 121: 'Egg Bomb', 122: 'Lick', 123: 'Smog', 124: 'Sludge',
+                              125: 'Bone Club', 126: 'Fire Blast', 127: 'Waterfall', 128: 'Clamp', 129: 'Swift',
+                              130: 'Skull Bash', 131: 'Spike Cannon', 132: 'Constrict', 133: 'Amnesia', 134: 'Kinesis',
+                              135: 'Soft-Boiled', 136: 'High Jump Kick', 137: 'Glare', 138: 'Dream Eater',
+                              139: 'Poison Gas', 140: 'Barrage', 141: 'Leech Life', 142: 'Lovely Kiss',
+                              143: 'Sky Attack', 144: 'Transform', 145: 'Bubble', 146: 'Dizzy Punch', 147: 'Spore',
+                              148: 'Flash', 149: 'Psywave', 150: 'Splash', 151: 'Acid Armor', 152: 'Crabhammer',
+                              153: 'Explosion', 154: 'Fury Swipes', 155: 'Bonemerang', 156: 'Rest', 157: 'Rock Slide',
+                              158: 'Hyper Fang', 159: 'Sharpen', 160: 'Conversion', 161: 'Tri Attack',
+                              162: 'Super Fang', 163: 'Slash', 164: 'Substitute', 165: 'Struggle'}
+
+        self.move_details = {'Absorb': {'Type': 'Grass', 'Power': 20, 'Accuracy': 1.0},
+                             'Acid': {'Type': 'Poison', 'Power': 40, 'Accuracy': 1.0},
+                             'Acid Armor': {'Type': 'Poison', 'Power': 0, 'Accuracy': 1.0},
+                             'Agility': {'Type': 'Psychic', 'Power': 0, 'Accuracy': 1.0},
+                             'Amnesia': {'Type': 'Psychic', 'Power': 0, 'Accuracy': 1.0},
+                             'Aurora Beam': {'Type': 'Ice', 'Power': 65, 'Accuracy': 1.0},
+                             'Barrage': {'Type': 'Normal', 'Power': 15, 'Accuracy': 0.85},
+                             'Barrier': {'Type': 'Psychic', 'Power': 0, 'Accuracy': 1.0},
+                             'Bide': {'Type': 'Normal', 'Power': 0, 'Accuracy': 1.0},
+                             'Bind': {'Type': 'Normal', 'Power': 15, 'Accuracy': 0.75},
+                             'Bite': {'Type': 'Normal', 'Power': 60, 'Accuracy': 1.0},
+                             'Blizzard': {'Type': 'Ice', 'Power': 120, 'Accuracy': 0.9},
+                             'Body Slam': {'Type': 'Normal', 'Power': 85, 'Accuracy': 1.0},
+                             'Bone Club': {'Type': 'Ground', 'Power': 65, 'Accuracy': 0.85},
+                             'Bonemerang': {'Type': 'Ground', 'Power': 50, 'Accuracy': 0.9},
+                             'Bubble': {'Type': 'Water', 'Power': 20, 'Accuracy': 1.0},
+                             'Bubblebeam': {'Type': 'Water', 'Power': 60, 'Accuracy': 1.0},
+                             'Clamp': {'Type': 'Water', 'Power': 35, 'Accuracy': 0.75},
+                             'Comet Punch': {'Type': 'Normal', 'Power': 18, 'Accuracy': 0.85},
+                             'Confuse Ray': {'Type': 'Ghost', 'Power': 0, 'Accuracy': 1.0},
+                             'Confusion': {'Type': 'Psychic', 'Power': 50, 'Accuracy': 1.0},
+                             'Constrict': {'Type': 'Normal', 'Power': 10, 'Accuracy': 1.0},
+                             'Conversion': {'Type': 'Normal', 'Power': 0, 'Accuracy': 1.0},
+                             'Counter': {'Type': 'Fighting', 'Power': 0, 'Accuracy': 1.0},
+                             'Crabhammer': {'Type': 'Water', 'Power': 90, 'Accuracy': 0.85},
+                             'Cut': {'Type': 'Normal', 'Power': 50, 'Accuracy': 0.95},
+                             'Defense Curl': {'Type': 'Normal', 'Power': 0, 'Accuracy': 1.0},
+                             'Dig': {'Type': 'Ground', 'Power': 100, 'Accuracy': 1.0},
+                             'Disable': {'Type': 'Normal', 'Power': 0, 'Accuracy': 0.55},
+                             'Dizzy Punch': {'Type': 'Normal', 'Power': 70, 'Accuracy': 1.0},
+                             'Double-Edge': {'Type': 'Normal', 'Power': 100, 'Accuracy': 1.0},
+                             'Double Kick': {'Type': 'Fighting', 'Power': 30, 'Accuracy': 1.0},
+                             'Doubleslap': {'Type': 'Normal', 'Power': 15, 'Accuracy': 0.85},
+                             'Double Team': {'Type': 'Normal', 'Power': 0, 'Accuracy': 1.0},
+                             'Dragon Rage': {'Type': 'Dragon', 'Power': 0, 'Accuracy': 1.0},
+                             'Dream Eater': {'Type': 'Psychic', 'Power': 100, 'Accuracy': 1.0},
+                             'Drill Peck': {'Type': 'Flying', 'Power': 80, 'Accuracy': 1.0},
+                             'Earthquake': {'Type': 'Ground', 'Power': 100, 'Accuracy': 1.0},
+                             'Egg Bomb': {'Type': 'Normal', 'Power': 100, 'Accuracy': 0.75},
+                             'Ember': {'Type': 'Fire', 'Power': 40, 'Accuracy': 1.0},
+                             'Explosion': {'Type': 'Normal', 'Power': 170, 'Accuracy': 1.0},
+                             'Fire Blast': {'Type': 'Fire', 'Power': 120, 'Accuracy': 0.85},
+                             'Fire Punch': {'Type': 'Fire', 'Power': 75, 'Accuracy': 1.0},
+                             'Fire Spin': {'Type': 'Fire', 'Power': 15, 'Accuracy': 0.7},
+                             'Fissure': {'Type': 'Ground', 'Power': 0, 'Accuracy': 0.3},
+                             'Flamethrower': {'Type': 'Fire', 'Power': 95, 'Accuracy': 1.0},
+                             'Flash': {'Type': 'Normal', 'Power': 0, 'Accuracy': 0.7},
+                             'Fly': {'Type': 'Flying', 'Power': 70, 'Accuracy': 0.95},
+                             'Focus Energy': {'Type': 'Normal', 'Power': 0, 'Accuracy': 1.0},
+                             'Fury Attack': {'Type': 'Normal', 'Power': 15, 'Accuracy': 0.85},
+                             'Fury Swipes': {'Type': 'Normal', 'Power': 15, 'Accuracy': 0.85},
+                             'Glare': {'Type': 'Normal', 'Power': 0, 'Accuracy': 0.75},
+                             'Growl': {'Type': 'Normal', 'Power': 0, 'Accuracy': 1.0},
+                             'Growth': {'Type': 'Normal', 'Power': 0, 'Accuracy': 1.0},
+                             'Guillotine': {'Type': 'Normal', 'Power': 0, 'Accuracy': 0.3},
+                             'Gust': {'Type': 'Normal', 'Power': 40, 'Accuracy': 1.0},
+                             'Harden': {'Type': 'Normal', 'Power': 0, 'Accuracy': 1.0},
+                             'Haze': {'Type': 'Ice', 'Power': 70, 'Accuracy': 1.0},
+                             'Headbutt': {'Type': 'Normal', 'Power': 70, 'Accuracy': 1.0},
+                             'Hi Jump Kick': {'Type': 'Fighting', 'Power': 85, 'Accuracy': 0.9},
+                             'Horn Attack': {'Type': 'Normal', 'Power': 65, 'Accuracy': 1.0},
+                             'Horn Drill': {'Type': 'Normal', 'Power': 0, 'Accuracy': 0.3},
+                             'Hydro Pump': {'Type': 'Water', 'Power': 120, 'Accuracy': 0.8},
+                             'Hyper Beam': {'Type': 'Normal', 'Power': 150, 'Accuracy': 0.9},
+                             'Hyper Fang': {'Type': 'Normal', 'Power': 80, 'Accuracy': 0.9},
+                             'Hypnosis': {'Type': 'Psychic', 'Power': 0, 'Accuracy': 0.6},
+                             'Ice Beam': {'Type': 'Ice', 'Power': 95, 'Accuracy': 1.0},
+                             'Ice Punch': {'Type': 'Ice', 'Power': 75, 'Accuracy': 1.0},
+                             'Jump Kick': {'Type': 'Fighting', 'Power': 70, 'Accuracy': 0.95},
+                             'Karate Chop': {'Type': 'Normal', 'Power': 50, 'Accuracy': 1.0},
+                             'Kinesis': {'Type': 'Psychic', 'Power': 0, 'Accuracy': 0.8},
+                             'Leech Life': {'Type': 'Bug', 'Power': 20, 'Accuracy': 1.0},
+                             'Leech Seed': {'Type': 'Grass', 'Power': 0, 'Accuracy': 0.9},
+                             'Leer': {'Type': 'Normal', 'Power': 0, 'Accuracy': 1.0},
+                             'Lick': {'Type': 'Ghost', 'Power': 20, 'Accuracy': 1.0},
+                             'Light Screen': {'Type': 'Psychic', 'Power': 0, 'Accuracy': 1.0},
+                             'Lovely Kiss': {'Type': 'Normal', 'Power': 0, 'Accuracy': 0.75},
+                             'Low Kick': {'Type': 'Fighting', 'Power': 50, 'Accuracy': 0.9},
+                             'Meditate': {'Type': 'Psychic', 'Power': 0, 'Accuracy': 1.0},
+                             'Mega Drain': {'Type': 'Grass', 'Power': 40, 'Accuracy': 1.0},
+                             'Mega Kick': {'Type': 'Normal', 'Power': 120, 'Accuracy': 0.75},
+                             'Mega Punch': {'Type': 'Normal', 'Power': 80, 'Accuracy': 0.85},
+                             'Metronome': {'Type': 'Normal', 'Power': 0, 'Accuracy': 1.0},
+                             'Mimic': {'Type': 'Normal', 'Power': 0, 'Accuracy': 1.0},
+                             'Minimize': {'Type': 'Normal', 'Power': 0, 'Accuracy': 1.0},
+                             'Mirror Move': {'Type': 'Flying', 'Power': 0, 'Accuracy': 1.0},
+                             'Mist': {'Type': 'Ice', 'Power': 0, 'Accuracy': 1.0},
+                             'Night Shade': {'Type': 'Ghost', 'Power': 0, 'Accuracy': 1.0},
+                             'Pay Day': {'Type': 'Normal', 'Power': 40, 'Accuracy': 1.0},
+                             'Peck': {'Type': 'Flying', 'Power': 35, 'Accuracy': 1.0},
+                             'Petal Dance': {'Type': 'Grass', 'Power': 90, 'Accuracy': 1.0},
+                             'Pin Missile': {'Type': 'Bug', 'Power': 14, 'Accuracy': 0.85},
+                             'Poison Gas': {'Type': 'Poison', 'Power': 0, 'Accuracy': 0.55},
+                             'Poisonpowder': {'Type': 'Poison', 'Power': 0, 'Accuracy': 0.75},
+                             'Poison Sting': {'Type': 'Poison', 'Power': 15, 'Accuracy': 1.0},
+                             'Pound': {'Type': 'Normal', 'Power': 40, 'Accuracy': 1.0},
+                             'Psybeam': {'Type': 'Psychic', 'Power': 65, 'Accuracy': 1.0},
+                             'Psychic': {'Type': 'Psychic', 'Power': 90, 'Accuracy': 1.0},
+                             'Psywave': {'Type': 'Psychic', 'Power': 0, 'Accuracy': 0.8},
+                             'Quick Attack': {'Type': 'Normal', 'Power': 40, 'Accuracy': 1.0},
+                             'Rage': {'Type': 'Normal', 'Power': 20, 'Accuracy': 1.0},
+                             'Razor Leaf': {'Type': 'Grass', 'Power': 55, 'Accuracy': 0.95},
+                             'Razor Wind': {'Type': 'Normal', 'Power': 80, 'Accuracy': 0.75},
+                             'Recover': {'Type': 'Normal', 'Power': 0, 'Accuracy': 1.0},
+                             'Reflect': {'Type': 'Psychic', 'Power': 0, 'Accuracy': 1.0},
+                             'Rest': {'Type': 'Psychic', 'Power': 0, 'Accuracy': 1.0},
+                             'Roar': {'Type': 'Normal', 'Power': 0, 'Accuracy': 1.0},
+                             'Rock Slide': {'Type': 'Rock', 'Power': 75, 'Accuracy': 0.9},
+                             'Rock Throw': {'Type': 'Rock', 'Power': 50, 'Accuracy': 0.9},
+                             'Rolling Kick': {'Type': 'Fighting', 'Power': 60, 'Accuracy': 0.85},
+                             'Sand-Attack': {'Type': 'Ground', 'Power': 0, 'Accuracy': 1.0},
+                             'Scratch': {'Type': 'Normal', 'Power': 40, 'Accuracy': 1.0},
+                             'Screech': {'Type': 'Normal', 'Power': 0, 'Accuracy': 0.85},
+                             'Seismic Toss': {'Type': 'Fighting', 'Power': 0, 'Accuracy': 1.0},
+                             'Selfdestruct': {'Type': 'Normal', 'Power': 130, 'Accuracy': 1.0},
+                             'Sharpen': {'Type': 'Normal', 'Power': 0, 'Accuracy': 1.0},
+                             'Sing': {'Type': 'Normal', 'Power': 0, 'Accuracy': 0.55},
+                             'Skull Bash': {'Type': 'Normal', 'Power': 100, 'Accuracy': 1.0},
+                             'Sky Attack': {'Type': 'Flying', 'Power': 140, 'Accuracy': 0.95},
+                             'Slam': {'Type': 'Normal', 'Power': 80, 'Accuracy': 0.75},
+                             'Slash': {'Type': 'Normal', 'Power': 70, 'Accuracy': 1.0},
+                             'Sleep Powder': {'Type': 'Grass', 'Power': 0, 'Accuracy': 0.75},
+                             'Sludge': {'Type': 'Poison', 'Power': 65, 'Accuracy': 1.0},
+                             'Smog': {'Type': 'Poison', 'Power': 20, 'Accuracy': 0.7},
+                             'Smokescreen': {'Type': 'Poison', 'Power': 0, 'Accuracy': 1.0},
+                             'Softboiled': {'Type': 'Normal', 'Power': 0, 'Accuracy': 1.0},
+                             'Solarbeam': {'Type': 'Grass', 'Power': 120, 'Accuracy': 1.0},
+                             'Sonicboom': {'Type': 'Normal', 'Power': 0, 'Accuracy': 0.9},
+                             'Spike Cannon': {'Type': 'Normal', 'Power': 20, 'Accuracy': 1.0},
+                             'Splash': {'Type': 'Normal', 'Power': 0, 'Accuracy': 1.0},
+                             'Spore': {'Type': 'Grass', 'Power': 0, 'Accuracy': 1.0},
+                             'Stomp': {'Type': 'Normal', 'Power': 65, 'Accuracy': 1.0},
+                             'Strength': {'Type': 'Normal', 'Power': 80, 'Accuracy': 1.0},
+                             'String Shot': {'Type': 'Bug', 'Power': 0, 'Accuracy': 0.95},
+                             'Struggle': {'Type': 'Normal', 'Power': 50, 'Accuracy': 1.0},
+                             'Stun Spore': {'Type': 'Grass', 'Power': 0, 'Accuracy': 0.75},
+                             'Submission': {'Type': 'Fighting', 'Power': 80, 'Accuracy': 0.8},
+                             'Substitute': {'Type': 'Normal', 'Power': 0, 'Accuracy': 1.0},
+                             'Super Fang': {'Type': 'Normal', 'Power': 0, 'Accuracy': 0.9},
+                             'Supersonic': {'Type': 'Normal', 'Power': 0, 'Accuracy': 0.55},
+                             'Surf': {'Type': 'Water', 'Power': 95, 'Accuracy': 1.0},
+                             'Swift': {'Type': 'Normal', 'Power': 60, 'Accuracy': 1.0},
+                             'Swords Dance': {'Type': 'Normal', 'Power': 0, 'Accuracy': 1.0},
+                             'Tackle': {'Type': 'Normal', 'Power': 35, 'Accuracy': 0.95},
+                             'Tail Whip': {'Type': 'Normal', 'Power': 0, 'Accuracy': 1.0},
+                             'Take Down': {'Type': 'Normal', 'Power': 90, 'Accuracy': 0.85},
+                             'Teleport': {'Type': 'Psychic', 'Power': 0, 'Accuracy': 1.0},
+                             'Thrash': {'Type': 'Normal', 'Power': 90, 'Accuracy': 1.0},
+                             'Thunder': {'Type': 'Electric', 'Power': 120, 'Accuracy': 0.7},
+                             'Thunderbolt': {'Type': 'Electric', 'Power': 95, 'Accuracy': 1.0},
+                             'Thunderpunch': {'Type': 'Electric', 'Power': 75, 'Accuracy': 1.0},
+                             'Thundershock': {'Type': 'Electric', 'Power': 40, 'Accuracy': 1.0},
+                             'Thunder Wave': {'Type': 'Electric', 'Power': 0, 'Accuracy': 1.0},
+                             'Toxic': {'Type': 'Poison', 'Power': 0, 'Accuracy': 0.85},
+                             'Transform': {'Type': 'Normal', 'Power': 0, 'Accuracy': 1.0},
+                             'Tri Attack': {'Type': 'Normal', 'Power': 80, 'Accuracy': 1.0},
+                             'Twineedle': {'Type': 'Bug', 'Power': 25, 'Accuracy': 1.0},
+                             'Vicegrip': {'Type': 'Normal', 'Power': 55, 'Accuracy': 1.0},
+                             'Vine Whip': {'Type': 'Grass', 'Power': 35, 'Accuracy': 1.0},
+                             'Waterfall': {'Type': 'Water', 'Power': 80, 'Accuracy': 1.0},
+                             'Water Gun': {'Type': 'Water', 'Power': 40, 'Accuracy': 1.0},
+                             'Whirlwind': {'Type': 'Normal', 'Power': 0, 'Accuracy': 1.0},
+                             'Wing Attack': {'Type': 'Flying', 'Power': 35, 'Accuracy': 1.0},
+                             'Withdraw': {'Type': 'Water', 'Power': 0, 'Accuracy': 1.0},
+                             'Wrap': {'Type': 'Normal', 'Power': 15, 'Accuracy': 0.85}}
 
     def flatten_features(self):
         flat = {}
@@ -589,7 +839,8 @@ class StateMapper:
 
     def get_current_pokemon(self, env) -> int:
         for i in range(1, 7):
-            if env.read_m(self.flattened_features["in_battle_player_pokemon_nr"]) == env.read_m(self.flattened_features[f"player_pokemon{i}_pokemon_nr"]):
+            if env.read_m(self.flattened_features["in_battle_player_pokemon_nr"]) == env.read_m(
+                    self.flattened_features[f"player_pokemon{i}_pokemon_nr"]):
                 return i
 
     def get_number_of_pokeballs(self, env) -> int:
@@ -598,7 +849,50 @@ class StateMapper:
                 return env.read_m(self.flattened_features[f"items_item_{i}_quantity"])
         return 0
 
+    def get_pokemon_effectiveness(self, att_type1, att_type2, def_type1, def_type2):
+        if att_type1 == att_type2:
+            att_type2 = None
+        if def_type1 == def_type2:
+            def_type2 = None
+
+        att_type1 = self.type_mappings[att_type1]
+        att_type2 = self.type_mappings[att_type2] if att_type2 is not None else None
+        def_type1 = self.type_mappings[def_type1]
+        def_type2 = self.type_mappings[def_type2] if def_type2 is not None else None
+
+        # Initial effectiveness is set to 1
+        effectiveness = 1
+
+        if att_type1 is not None and def_type1 is not None:
+            effectiveness *= self.effectiveness[att_type1][def_type1]
+        if att_type1 is not None and def_type2 is not None:
+            effectiveness *= self.effectiveness[att_type1][def_type2]
+        if att_type2 is not None and def_type1 is not None:
+            effectiveness *= self.effectiveness[att_type2][def_type1]
+        if att_type2 is not None and def_type2 is not None:
+            effectiveness *= self.effectiveness[att_type2][def_type2]
+
+        return effectiveness
+
+    def get_move_details(self, move_id):
+        return self.move_details[self.move_mappings[move_id]]
+
+    def get_move_effectiveness(self, att_type, def_type):
+        att_type = self.type_mappings[att_type]
+        def_type = self.type_mappings[def_type]
+        return self.effectiveness[att_type][def_type]
+
+    def get_player_status(self, env):
+        status_string = "{0:b}".format(self.get_feature_value(env, "in_battle_player_pokemon_status"))
+        return [int(i) for i in status_string]
+
+    def get_enemy_status(self, env):
+        status_string = "{0:b}".format(self.get_feature_value(env, "in_battle_enemy_pokemon_status"))
+        return [int(i) for i in status_string]
+
 
 if __name__ == "__main__":
     state_mapper = StateMapper()
-    print(state_mapper.flatten_features())
+    print(state_mapper.get_pokemon_effectiveness(0, 2, 21, 21))
+    print(state_mapper.get_pokemon_effectiveness(21, 21, 0, 2))
+
