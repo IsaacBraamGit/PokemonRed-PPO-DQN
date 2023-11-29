@@ -73,7 +73,8 @@ class DQNAgent:
         return model
 
     def update_target_model(self):
-        self.target_model.set_weights(self.model.get_weights())
+        if self.e % 400 == 0:
+            self.target_model.set_weights(self.model.get_weights())
 
     def remember(self, state, action, reward, next_state, done):
 
@@ -183,10 +184,13 @@ class DQNAgent:
         self.model.save_weights(name)
 
     def get_state(self):
+        # todo: item menu, pokemon menu
+        # Todo: state normalization
+
         feature_values = self.state_mapper.get_feature_values(self.env)
 
         # Player Pokemon in battle
-        player_current_hp = feature_values["in_battle_player_hp"]
+        player_current_hp = feature_values["in_battle_player_current_hp"]
         player_max_hp = feature_values["in_battle_player_max_hp"]
         player_status = self.state_mapper.get_player_status(self.env)
         pp_move1 = feature_values["in_battle_player_pp_move1"]
@@ -206,7 +210,7 @@ class DQNAgent:
         ]
 
         # Enemy in battle
-        enemy_current_hp = feature_values["in_battle_enemy_hp"]
+        enemy_current_hp = feature_values["in_battle_enemy_current_hp"]
         enemy_max_hp = feature_values["in_battle_enemy_max_hp"]
         enemy_status = self.state_mapper.get_enemy_status(self.env)
         enemy_attack = feature_values["in_battle_enemy_attack"]
@@ -217,12 +221,12 @@ class DQNAgent:
         enemy_type2 = feature_values["in_battle_enemy_type2"]
 
         state.extend([
-            enemy_current_hp, enemy_max_hp, enemy_status, enemy_attack, enemy_defense, enemy_speed, enemy_special
+            enemy_current_hp, enemy_max_hp, *enemy_status, enemy_attack, enemy_defense, enemy_speed, enemy_special
         ])
 
         # Player Pokemon out of battle
         for i in range(1, 7):
-            pokemon_hp = feature_values[f"player_pokemon{i}_hp"]
+            pokemon_hp = feature_values[f"player_pokemon{i}_current_hp"]
             pokemon_max_hp = feature_values[f"player_pokemon{i}_max_hp"]
             pokemon_type1 = feature_values[f"player_pokemon{i}_type1"]
             pokemon_type2 = feature_values[f"player_pokemon{i}_type2"]
@@ -235,7 +239,7 @@ class DQNAgent:
 
         # Enemy Pokemon out of battle
         for i in range(1, 7):
-            pokemon_hp = feature_values[f"enemy_pokemon{i}_hp"]
+            pokemon_hp = feature_values[f"enemy_pokemon{i}_current_hp"]
             pokemon_max_hp = feature_values[f"enemy_pokemon{i}_max_hp"]
             pokemon_type1 = feature_values[f"enemy_pokemon{i}_type1"]
             pokemon_type2 = feature_values[f"enemy_pokemon{i}_type2"]
@@ -249,70 +253,25 @@ class DQNAgent:
         # Player current moves
         for i in range(1, 5):
             move_details = self.state_mapper.get_move_details(feature_values[f"in_battle_player_move{i}"])
+            if move_details is None:
+                state.extend([0, 0, 0])
+                continue
             move_power = move_details["Power"]
             move_accuracy = move_details["Accuracy"]
             move_type = move_details[f"Type"]
-            for i in range(1, 5):
-                enemy_move_type = self.state_mapper.get_move_details(
-                    self.state_mapper.get_move_details(feature_values[f"in_battle_enemy_move{i}"]["Type"]))
-                move_effectiveness = self.state_mapper.get_move_effectiveness(move_type, enemy_move_type)
-                state.append(move_effectiveness)
+            move_effectiveness = self.state_mapper.get_move_effectiveness(move_type, enemy_type1, enemy_type2)
             state.extend([
-                move_power, move_accuracy
+                move_power, move_accuracy, move_effectiveness
             ])
 
-        # todo: decompose things like move into damage, hit perc, additional effect, to have more generalisation, also for instance poke id
-        # todo: feature engineering with hp, type, status, etc
+        state.append(int(feature_values["in_battle_type_of_battle"] > 1))  # 0 = wild, 1 = trainer / gym leader, etc
 
-        y_position = self.env.read_m(0xCC24)
-        x_position = self.env.read_m(0xCC25)
-        selected_menu_item = self.env.read_m(0xCC26)
-
-        # mapping
-        # todo: item menu, pokemon menu
-        in_text = False
-        in_menu = True
-        if y_position == 2 and x_position == 11 and selected_menu_item == 2:
-            in_text = True
-            in_menu = False
-        slot = 0
-
-        if x_position == 5:
-            in_menu = False
-            slot = selected_menu_item
-
-        if x_position == 9:
-            if selected_menu_item == 0:
-                slot = 1
-            if selected_menu_item == 1:
-                slot = 3
-
-        if x_position == 15:
-            if selected_menu_item == 0:
-                slot = 2
-            if selected_menu_item == 1:
-                slot = 4
-
-        if slot > 2:
-            slotbit1 = 1
-        else:
-            slotbit1 = 0
-        if slot % 2 == 0:
-            slotbit2 = 1
-        else:
-            slotbit2 = 0
-
-        # Todo:player_pokemon_internal id to one hot, and enemy
-        # Todo: add nr of actions in this battle(like first move should probably be a to open fight menu)
-        # Todo: state normalization
-
-        state.extend([
-            in_menu, in_text, slotbit1, slotbit2
-        ])
+        # Add positioning in menus
+        state.extend(self.state_mapper.get_positional_data(self.env))
 
         return np.reshape(state, [1, len(state)])
 
-    def get_reward(self, next_state, state):
+    def get_reward(self, state, next_state):
         # todo: how do we measure stat drops, so it is represented in the state, so we can learn it?
         # health of opponent
         score = state[0][9] - next_state[0][9]
@@ -336,7 +295,7 @@ class DQNAgent:
         if terminated or truncated:
             done = True
 
-        reward = self.get_reward(next_state, state)
+        reward = self.get_reward(state, next_state)
         # Store the experience in memory
         self.remember(state, action, reward, next_state, done)
 

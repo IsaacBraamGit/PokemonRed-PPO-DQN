@@ -64,19 +64,18 @@ if __name__ == '__main__':
                 next_state = small_agent.get_state()
                 small_agent.learn(action, terminated, truncated, state, next_state)
                 state = next_state
-                step += 1
-                if step % 400:
-                    small_agent.update_target_model()
+                small_agent.update_target_model()
             else:
                 action_big_model, _states = model.predict(obs)
                 obs, rewards, terminated, truncated, info = env.step(action_big_model)
                 env.render()
-                step += 1
+
             if step % 30_000 == 0 and step != 0:
                 env.reset()
             if truncated:
                 break
             previous_battle_status = battle_status
+            step += 1
             if previous_battle_status == 1 and battle_status == 0:
                 small_agent.action_mapper.reset()
         else:

@@ -120,16 +120,17 @@ class StateMapper:
                     "current_hp": [0xD015, 0xD016],  # Range
                     "level": 0xD022,
                     "status": 0xD018,
-                    "type_1": 0xD019,
-                    "type_2": 0xD01A,
-                    "move_1": 0xD01C,
-                    "move_2": 0xD01D,
-                    "move_3": 0xD01E,
-                    "move_4": 0xD01F,
+                    "type1": 0xD019,
+                    "type2": 0xD01A,
+                    "move1": 0xD01C,
+                    "move2": 0xD01D,
+                    "move3": 0xD01E,
+                    "move4": 0xD01F,
                     "max_hp": [0xD023, 0xD024],  # Range
                     "attack": [0xD025, 0xD026],  # Range
                     "defense": [0xD027, 0xD028],  # Range
                     "speed": [0xD029, 0xD02A],  # Range
+                    "special": [0xD02B, 0xD02C],  # Range
                     "pp_move1": 0xD02D,
                     "pp_move2": 0xD02E,
                     "pp_move3": 0xD02F,
@@ -139,16 +140,17 @@ class StateMapper:
                     "current_hp": [0xCFE6, 0xCFE7],  # Range
                     "level": 0xCFF3,
                     "status": 0xCFE9,
-                    "type_1": 0xCFEA,
-                    "type_2": 0xCFEB,
-                    "move_1": 0xCFED,
-                    "move_2": 0xCFEE,
-                    "move_3": 0xCFEF,
-                    "move_4": 0xCFF0,
+                    "type1": 0xCFEA,
+                    "type2": 0xCFEB,
+                    "move1": 0xCFED,
+                    "move2": 0xCFEE,
+                    "move3": 0xCFEF,
+                    "move4": 0xCFF0,
                     "max_hp": [0xCFF4, 0xCFF5],  # Range
                     "attack": [0xCFF6, 0xCFF7],  # Range
                     "defense": [0xCFF8, 0xCFF9],  # Range
                     "speed": [0xCFFA, 0xCFFB],  # Range
+                    "special": [0xCFFC, 0xCFFD],  # Range
                     "pp_move1": 0xFFE,
                     "pp_move2": 0xFFF,
                     "pp_move3": 0xD000,
@@ -545,6 +547,11 @@ class StateMapper:
                     "quantity": 0xD345
                 },
                 "end_of_list": 0xD346
+            },
+            "misc": {
+                "y_position": 0xCC24,
+                "x_position": 0xCC25,
+                "selected_menu_item": 0xCC26
             }
         }
         self.flattened_features = self.flatten_features()
@@ -875,20 +882,73 @@ class StateMapper:
         return effectiveness
 
     def get_move_details(self, move_id):
+        if move_id == 0:
+            return None
         return self.move_details[self.move_mappings[move_id]]
 
-    def get_move_effectiveness(self, att_type, def_type):
-        att_type = self.type_mappings[att_type]
-        def_type = self.type_mappings[def_type]
-        return self.effectiveness[att_type][def_type]
+    def get_move_effectiveness(self, move_type: str, def_type1: int, def_type2: int):
+        if def_type1 == def_type2:
+            def_type2 = None
+
+        # Convert type integers to type strings using the type_mappings dictionary
+        def_type1_str = self.type_mappings.get(def_type1)
+        def_type2_str = self.type_mappings.get(def_type2) if def_type2 is not None else None
+
+        # Initial effectiveness is set to 1 (neutral effectiveness)
+        effectiveness = 1
+
+        if def_type1_str:
+            effectiveness *= self.effectiveness[move_type][def_type1_str]
+        if def_type2_str:
+            effectiveness *= self.effectiveness[move_type][def_type2_str]
+
+        return effectiveness
 
     def get_player_status(self, env):
-        status_string = "{0:b}".format(self.get_feature_value(env, "in_battle_player_pokemon_status"))
+        status_string = format(self.get_feature_value(env, "in_battle_player_status"), '08b')[:-1]
         return [int(i) for i in status_string]
 
     def get_enemy_status(self, env):
-        status_string = "{0:b}".format(self.get_feature_value(env, "in_battle_enemy_pokemon_status"))
+        status_string = format(self.get_feature_value(env, "in_battle_enemy_status"), '08b')[:-1]
         return [int(i) for i in status_string]
+
+    def get_positional_data(self, env):
+        x_position = env.read_m(self.flattened_features["misc_x_position"])
+        y_position = env.read_m(self.flattened_features["misc_y_position"])
+        selected_menu_item = env.read_m(self.flattened_features["misc_selected_menu_item"])
+        in_text = False
+        in_menu = True
+        if y_position == 2 and x_position == 11 and selected_menu_item == 2:
+            in_text = True
+            in_menu = False
+        slot = 0
+
+        if x_position == 5:
+            in_menu = False
+            slot = selected_menu_item
+
+        if x_position == 9:
+            if selected_menu_item == 0:
+                slot = 1
+            if selected_menu_item == 1:
+                slot = 3
+
+        if x_position == 15:
+            if selected_menu_item == 0:
+                slot = 2
+            if selected_menu_item == 1:
+                slot = 4
+
+        if slot > 2:
+            slotbit1 = 1
+        else:
+            slotbit1 = 0
+        if slot % 2 == 0:
+            slotbit2 = 1
+        else:
+            slotbit2 = 0
+
+        return [in_text, in_menu, slotbit1, slotbit2]
 
 
 if __name__ == "__main__":
