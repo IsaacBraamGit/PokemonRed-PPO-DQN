@@ -6,49 +6,6 @@
   <component name="ChangeListManager">
     <list default="true" id="2af7fbdf-27c0-4c0b-a3d9-bb7b6f466e36" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/baselines/_our_model.py" beforeDir="false" afterPath="$PROJECT_DIR$/baselines/_our_model.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/baselines/agent_enabled.txt" beforeDir="false" afterPath="$PROJECT_DIR$/baselines/agent_enabled.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/baselines/mapping_actions.py" beforeDir="false" afterPath="$PROJECT_DIR$/baselines/mappings.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/baselines/models/dqn_model_v1_10000.h5" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/baselines/models/dqn_model_v1_12000.h5" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/baselines/models/dqn_model_v1_14000.h5" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/baselines/models/dqn_model_v1_16000.h5" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/baselines/models/dqn_model_v1_18000.h5" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/baselines/models/dqn_model_v1_2000.h5" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/baselines/models/dqn_model_v1_20000.h5" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/baselines/models/dqn_model_v1_22000.h5" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/baselines/models/dqn_model_v1_24000.h5" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/baselines/models/dqn_model_v1_26000.h5" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/baselines/models/dqn_model_v1_28000.h5" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/baselines/models/dqn_model_v1_4000.h5" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/baselines/models/dqn_model_v1_6000.h5" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/baselines/models/dqn_model_v1_8000.h5" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/baselines/models/dqn_model_v2_10000.h5" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/baselines/models/dqn_model_v2_12000.h5" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/baselines/models/dqn_model_v2_14000.h5" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/baselines/models/dqn_model_v2_16000.h5" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/baselines/models/dqn_model_v2_18000.h5" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/baselines/models/dqn_model_v2_20000.h5" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/baselines/models/dqn_model_v2_22000.h5" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/baselines/models/dqn_model_v2_24000.h5" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/baselines/models/dqn_model_v2_26000.h5" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/baselines/models/dqn_model_v2_28000.h5" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/baselines/models/dqn_model_v2_30000.h5" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/baselines/models/dqn_model_v2_32000.h5" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/baselines/models/dqn_model_v2_34000.h5" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/baselines/models/dqn_model_v2_36000.h5" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/baselines/models/dqn_model_v2_4000.h5" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/baselines/models/dqn_model_v2_6000.h5" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/baselines/models/dqn_model_v2_8000.h5" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/baselines/models/dqn_model_v3_2000.h5" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/baselines/models/dqn_model_v3_4000.h5" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/baselines/models/dqn_model_v3_6000.h5" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/baselines/models/dqn_model_v4_2000.h5" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/baselines/models/log_dqn_model_v3.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/baselines/models/log_dqn_model_v4.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/baselines/red_gym_env.py" beforeDir="false" afterPath="$PROJECT_DIR$/baselines/red_gym_env.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/baselines/run_pretrained_interactive.py" beforeDir="false" afterPath="$PROJECT_DIR$/baselines/run_pretrained_interactive.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/baselines/util.py" beforeDir="false" afterPath="$PROJECT_DIR$/baselines/util.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -78,22 +35,22 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "WebServerToolWindowFactoryState": "false",
-    "git-widget-placeholder": "speedup",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "preferences.keymap",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;speedup&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.keymap&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
       <recent name="C:\Users\JonathanYbema\Documents\GitHub\PokemonRedExperiments-master\baselines\session_4da05e87_main_good" />
@@ -212,28 +169,18 @@
       <workItem from="1700329737417" duration="14905000" />
       <workItem from="1700424791195" duration="4102000" />
       <workItem from="1700480779779" duration="19599000" />
+      <workItem from="1701253693128" duration="1572000" />
     </task>
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
   </component>
-  <component name="XDebuggerManager">
-    <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/baselines/_our_model.py</url>
-          <line>97</line>
-          <option name="timeStamp" value="2" />
-        </line-breakpoint>
-      </breakpoints>
-    </breakpoint-manager>
-  </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/PokemonRedExperiments_master$test.coverage" NAME="test Coverage Results" MODIFIED="1699709092279" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/PokemonRedExperiments_master$_our_model.coverage" NAME="_our_model Coverage Results" MODIFIED="1700494670963" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/baselines" />
     <SUITE FILE_PATH="coverage/PokemonRedExperiments_master$red_gym_env.coverage" NAME="red_gym_env Coverage Results" MODIFIED="1699969924577" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/baselines" />
-    <SUITE FILE_PATH="coverage/PokemonRedExperiments_master$run_pretrained_interactive.coverage" NAME="run_pretrained_interactive Coverage Results" MODIFIED="1700501622138" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/baselines" />
     <SUITE FILE_PATH="coverage/PokemonRedExperiments_master$mappings.coverage" NAME="mappings Coverage Results" MODIFIED="1700493874876" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/baselines" />
+    <SUITE FILE_PATH="coverage/PokemonRedExperiments_master$run_pretrained_interactive.coverage" NAME="run_pretrained_interactive Coverage Results" MODIFIED="1700501622138" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/baselines" />
+    <SUITE FILE_PATH="coverage/PokemonRedExperiments_master$test.coverage" NAME="test Coverage Results" MODIFIED="1699709092279" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
 </project>
