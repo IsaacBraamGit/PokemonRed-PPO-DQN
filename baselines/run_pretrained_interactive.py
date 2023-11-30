@@ -58,7 +58,7 @@ if __name__ == '__main__':
                     env.wait(360)
                     env.step(4)
                     env.wait(360)
-                action, action_list = small_agent.act(state)
+                action, action_list = small_agent.act(state, True)
                 _, rewards, terminated, truncated, _ = perform_actions_in_env(action_list, env)
                 # TODO think about how to handle rewards to compare to the big model
                 next_state = small_agent.get_state()
