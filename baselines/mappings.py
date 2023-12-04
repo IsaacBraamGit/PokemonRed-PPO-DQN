@@ -31,7 +31,7 @@ class ActionMapper:
             8: ["m2", 4, "p5", 4, 4],  # pokemon 5
             9: ["m2", 4, "p6", 4, 4],  # pokemon 6
             10: ["m4", 4, 4],  # run
-            11: ["m3", 4, 4, 4],  # pokeball
+            11: ["m3", 4, 4],  # pokeball
             12: [7]  # pass
             # 13: ["m3", 4, "b2"]         # healing
         }

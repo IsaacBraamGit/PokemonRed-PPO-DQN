@@ -11,7 +11,7 @@ from stable_baselines3.common.callbacks import CheckpointCallback
 from util import perform_actions_in_env
 import time
 OUR_SMALL_AGENT = True
-
+pokemon_caught = 1
 
 def make_env(env_conf, seed=0):
     def _init():
@@ -58,8 +58,8 @@ if __name__ == '__main__':
                     env.wait(360)
                     env.step(4)
                     env.wait(360)
-                action, action_list = small_agent.act(state, False)
-                _, rewards, terminated, truncated, _ = perform_actions_in_env(action_list, env, small_agent)
+                action, action_list = small_agent.act(state, True)
+                _, rewards, terminated, truncated, _, pokemon_caught = perform_actions_in_env(action,action_list, env, small_agent, pokemon_caught)
                 # TODO think about how to handle rewards to compare to the big model
                 next_state = small_agent.get_state()
                 small_agent.learn(action, terminated, truncated, state, next_state)
