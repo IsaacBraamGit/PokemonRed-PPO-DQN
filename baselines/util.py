@@ -9,6 +9,7 @@ def handle_text():
 def perform_actions_in_env(overall_action,action_list, env, small_agent, pokemon_caught):
     pokemon_named = False
     for action in action_list:
+        env.wait(10)
         obs, rewards, terminated, truncated, info = env.step(action)
     env.wait(100)
 
@@ -25,15 +26,16 @@ def perform_actions_in_env(overall_action,action_list, env, small_agent, pokemon
             env.wait(100)
             return obs, rewards, terminated, truncated, info, pokemon_caught
         # name pokemon
-        if health != 0 and menu == 1 and slotbit2 == 1 and not pokemon_named and overall_action == 11:
-            print("NAMING")
-            obs, rewards, terminated, truncated, info = env.step(4)
-            env.wait(100)
-            for i in range(0,pokemon_caught):
-                obs, rewards, terminated, truncated, info = env.step(2)
-                env.wait(100)
-            pokemon_caught += 1
-            pokemon_named = True
+        y_pos = env.read_m(0xCC24)
+        x_pos = env.read_m(0xCC25)
+        if overall_action == 11:
+            if health != 0 and y_pos == 3 and x_pos == 1 and not pokemon_named and overall_action == 11:
+                print("NAMING")
+                for i in range(0,pokemon_caught):
+                    obs, rewards, terminated, truncated, info = env.step(2)
+                    env.wait(100)
+                pokemon_caught += 1
+                pokemon_named = True
         battle_status = env.read_m(0xD057)
         obs, rewards, terminated, truncated, info = env.step(4)
         state = small_agent.get_state()

@@ -58,7 +58,7 @@ if __name__ == '__main__':
                     env.wait(360)
                     env.step(4)
                     env.wait(360)
-                action, action_list = small_agent.act(state, True)
+                action, action_list = small_agent.act(state, False)
                 _, rewards, terminated, truncated, _, pokemon_caught = perform_actions_in_env(action,action_list, env, small_agent, pokemon_caught)
                 # TODO think about how to handle rewards to compare to the big model
                 next_state = small_agent.get_state()
