@@ -18,19 +18,18 @@ class ActionMapper:
         self.fight_menu = 1
         self.pokemon_menu = 1
         self.bag_menu = 1
-        self.pokemon_nr = 1
 
         self.actions = {
-            0: ["m1", 4, "f1", 4, 4],  # attack 1
-            1: ["m1", 4, "f2", 4, 4],  # attack 2
-            2: ["m1", 4, "f3", 4, 4],  # attack 3
-            3: ["m1", 4, "f4", 4, 4],  # attack 4
-            4: ["m2", 4, "p1", 4, 4, 4],  # pokemon 1
-            5: ["m2", 4, "p2", 4, 4, 4],  # pokemon 2
-            6: ["m2", 4, "p3", 4, 4, 4],  # pokemon 3
-            7: ["m2", 4, "p4", 4, 4, 4],  # pokemon 4
-            8: ["m2", 4, "p5", 4, 4, 4],  # pokemon 5
-            9: ["m2", 4, "p6", 4, 4, 4],  # pokemon 6
+            0: ["m1", 4, "f1", 4],  # attack 1
+            1: ["m1", 4, "f2", 4],  # attack 2
+            2: ["m1", 4, "f3", 4],  # attack 3
+            3: ["m1", 4, "f4", 4],  # attack 4
+            4: ["m2", 4, "p1", 4, 4],  # pokemon 1
+            5: ["m2", 4, "p2", 4, 4],  # pokemon 2
+            6: ["m2", 4, "p3", 4, 4],  # pokemon 3
+            7: ["m2", 4, "p4", 4, 4],  # pokemon 4
+            8: ["m2", 4, "p5", 4, 4],  # pokemon 5
+            9: ["m2", 4, "p6", 4, 4],  # pokemon 6
             10: ["m4", 4, 4],  # run
             11: ["m3", 4, 4, 4],  # pokeball
             12: [7]  # pass
@@ -44,9 +43,21 @@ class ActionMapper:
         self.fight_menu = 1
         self.pokemon_menu = 1
         self.bag_menu = 1
+    def reset_on_switch(self):
+        self.fight_menu = 1
 
-    def get_action_sequence(self, action):
+    def get_action_sequence(self, action, state):
+
         action_list = self.actions[action]
+        # dead
+
+        if state[0][0] == 0:
+            if not 3 < action < 10:
+                return [7]
+            if action - 3 == self.pokemon_menu:
+                return [7]
+            action_list = action_list[2:]
+
         # transforms action string
         new_list = []
         for l in action_list:

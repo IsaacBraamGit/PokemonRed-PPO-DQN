@@ -59,7 +59,7 @@ if __name__ == '__main__':
                     env.step(4)
                     env.wait(360)
                 action, action_list = small_agent.act(state, True)
-                _, rewards, terminated, truncated, _ = perform_actions_in_env(action_list, env)
+                _, rewards, terminated, truncated, _ = perform_actions_in_env(action_list, env, small_agent)
                 # TODO think about how to handle rewards to compare to the big model
                 next_state = small_agent.get_state()
                 small_agent.learn(action, terminated, truncated, state, next_state)
@@ -74,10 +74,15 @@ if __name__ == '__main__':
                 env.reset()
             if truncated:
                 break
-            previous_battle_status = battle_status
+
             step += 1
             if previous_battle_status == 1 and battle_status == 0:
                 small_agent.action_mapper.reset()
+            # if switch
+            print("ACTION ",action)
+            if 3 < action < 10:
+                small_agent.action_mapper.reset_on_switch()
+            previous_battle_status = battle_status
         else:
             obs, rewards, terminated, truncated, info = env.step(action)
         env.render()

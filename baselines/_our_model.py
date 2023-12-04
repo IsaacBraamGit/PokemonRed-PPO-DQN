@@ -95,13 +95,14 @@ class DQNAgent:
             user_input = input("Please enter a number: ")
             action = int(user_input)
 
+
         print(action)
         if not self.get_action_validity(action):
             print("not valid")
             action = 12  # pass if not valid
 
         print("action:", action)
-        action_list = self.action_mapper.get_action_sequence(action)
+        action_list = self.action_mapper.get_action_sequence(action,state)
         print("action_list", action_list)
 
         return action, action_list
@@ -120,7 +121,7 @@ class DQNAgent:
             return target_pokemon_nr > 0
         if action == 10:
             # Only valid if battle type is not wild
-            return self.state_mapper.get_feature_value(self.env, "in_battle_type_of_battle") != 1
+            return self.state_mapper.get_feature_value(self.env, "in_battle_type_of_battle") == 1
         if action == 11:
             # Only valid if more than 0 pokeballs are available
             return self.state_mapper.get_number_of_pokeballs(self.env) > 0
