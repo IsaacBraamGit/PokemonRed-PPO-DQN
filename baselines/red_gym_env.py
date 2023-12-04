@@ -113,7 +113,7 @@ class RedGymEnv(Env):
             
         self.reset()
 
-    def reset(self, seed=None):
+    def reset(self, seed=None, options = None):
         self.seed = seed
         # restart game, skipping credits
         with open(self.init_state, "rb") as f:
@@ -190,6 +190,8 @@ class RedGymEnv(Env):
         return game_pixels_render
     
     def step(self, action):
+        if action == 6:
+            action = 7
         self.run_action_on_emulator(action)
         self.append_agent_stats(action)
 
