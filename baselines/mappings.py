@@ -45,13 +45,21 @@ class ActionMapper:
         self.bag_menu = 1
     def reset_on_switch(self):
         self.fight_menu = 1
-
+        self.menu = 1
+        self.bag_menu = 1
     def get_action_sequence(self, action, state):
 
         action_list = self.actions[action]
         # dead
 
         if state[0][0] == 0:
+            if not 3 < action < 10:
+                return [7]
+            if action - 3 == self.pokemon_menu:
+                return [7]
+            action_list = action_list[2:]
+        # killed opponent pokemon
+        if state[0][-1] == 0 and state[0][-2] == 0 and state[0][-3] == 0 and state[0][-4] == 0:
             if not 3 < action < 10:
                 return [7]
             if action - 3 == self.pokemon_menu:

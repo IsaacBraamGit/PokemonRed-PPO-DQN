@@ -124,7 +124,7 @@ class DQNAgent:
             return self.state_mapper.get_feature_value(self.env, "in_battle_type_of_battle") == 1
         if action == 11:
             # Only valid if more than 0 pokeballs are available
-            return self.state_mapper.get_number_of_pokeballs(self.env) > 0
+            return self.state_mapper.get_number_of_pokeballs(self.env) > 0 and self.state_mapper.get_feature_value(self.env,'in_battle_type_of_battle') == 1
 
     def replay(self, batch_size):
         minibatch = random.sample(self.memory, batch_size)
