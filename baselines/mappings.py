@@ -865,8 +865,17 @@ class StateMapper:
 
     def get_current_pokemon(self, env) -> int:
         for i in range(1, 7):
-            if env.read_m(self.flattened_features["in_battle_player_pokemon_nr"]) == env.read_m(
-                    self.flattened_features[f"player_pokemon{i}_pokemon_nr"]):
+            same_nr = env.read_m(self.flattened_features["in_battle_player_pokemon_nr"]) == env.read_m(
+                    self.flattened_features[f"player_pokemon{i}_pokemon_nr"])
+            same_hp = env.read_m(self.flattened_features[f"player_pokemon{i}_current_hp"]) == env.read_m(
+                    self.flattened_features["in_battle_player_current_hp"])
+            same_attack_ev = env.read_m(self.flattened_features[f"player_pokemon{i}_attack_ev"]) == env.read_m(
+                    self.flattened_features["in_battle_player_attack_ev"])
+            same_defense_ev = env.read_m(self.flattened_features[f"player_pokemon{i}_defense_ev"]) == env.read_m(
+                    self.flattened_features["in_battle_player_defense_ev"])
+            same_attack_defense_iv = env.read_m(self.flattened_features[f"player_pokemon{i}_attack_defense_iv"]) == env.read_m(
+                    self.flattened_features["in_battle_player_attack_defense_iv"])
+            if same_nr and same_hp and same_attack_ev and same_defense_ev and same_attack_defense_iv:
                 return i
 
     def get_number_of_pokeballs(self, env) -> int:
