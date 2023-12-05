@@ -290,14 +290,14 @@ class DQNAgent:
 
         state.append(int(feature_values["in_battle_type_of_battle"] > 1))  # 0 = wild, 1 = trainer / gym leader, etc
 
-        # Add positioning in menus
-        state.extend(self.state_mapper.get_positional_data(self.env))
-
         # Add number of pokeballs
         state.append(self.state_mapper.get_number_of_pokeballs(self.env))
 
         # Add number of items
         state.append(self.state_mapper.get_number_of_items(self.env))
+
+        # Add positioning in menus
+        state.extend(self.state_mapper.get_positional_data(self.env))
 
         return np.reshape(state, [1, len(state)])
 
@@ -324,7 +324,7 @@ class DQNAgent:
         player_total_experience = sum(next_state[0][i + 33] for i in range(0, 7, 5)) - sum(
             state[0][i + 33] for i in range(0, 7, 5))
 
-        total_items = next_state[0][110] - state[0][110]
+        total_items = next_state[0][106] - state[0][106]
 
         score = (
                 - self.enemy_health_weight * enemy_health
