@@ -57,6 +57,7 @@ class DQNAgent:
         self.player_total_experience_weight = 1
         self.total_items_weight = 1
         self.acion_invalid_count = 0
+        self.last_valid = [7]
 
     def get_latest_version(self):
         max_e = -1
@@ -118,7 +119,11 @@ class DQNAgent:
                 print("not valid")
                 action = 12  # pass if not valid
             else:
+                self.last_valid = self.action_mapper.get_action_sequence(action, state)
                 self.acion_invalid_count = 0
+        else:
+            self.acion_invalid_count = 0
+            return action, self.last_valid
 
         print("action:", action)
         action_list = self.action_mapper.get_action_sequence(action, state)
