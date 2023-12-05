@@ -110,13 +110,14 @@ class DQNAgent:
             user_input = input("Please enter a number: ")
             action = int(user_input)
 
+
         print(action)
         if not self.get_action_validity(action):
             print("not valid")
             action = 12  # pass if not valid
 
         print("action:", action)
-        action_list = self.action_mapper.get_action_sequence(action)
+        action_list = self.action_mapper.get_action_sequence(action,state)
         print("action_list", action_list)
 
         return action, action_list
@@ -130,15 +131,15 @@ class DQNAgent:
             is_switching = action - 3 != current_pokemon
             if not is_switching:
                 return False
-            # If switching, check if the target Pokémon exists
-            target_pokemon_nr = self.state_mapper.get_feature_value(self.env, f"player_pokemon{action - 3}_pokemon_nr")
-            return target_pokemon_nr > 0
+            # If switching, check if the target Pokémon has more than 0 HP
+            target_pokemon_hp = self.state_mapper.get_feature_value(self.env, f"player_pokemon{action - 3}_current_hp")
+            return target_pokemon_hp > 0
         if action == 10:
             # Only valid if battle type is not wild
-            return self.state_mapper.get_feature_value(self.env, "in_battle_type_of_battle") != 1
+            return self.state_mapper.get_feature_value(self.env, "in_battle_type_of_battle") == 1
         if action == 11:
             # Only valid if more than 0 pokeballs are available
-            return self.state_mapper.get_number_of_pokeballs(self.env) > 0
+            return self.state_mapper.get_number_of_pokeballs(self.env) > 0 and self.state_mapper.get_feature_value(self.env,'in_battle_type_of_battle') == 1
 
     def replay(self, batch_size):
         minibatch = random.sample(self.memory, batch_size)

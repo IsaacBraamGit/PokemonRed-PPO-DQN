@@ -18,21 +18,20 @@ class ActionMapper:
         self.fight_menu = 1
         self.pokemon_menu = 1
         self.bag_menu = 1
-        self.pokemon_nr = 1
 
         self.actions = {
-            0: ["m1", 4, "f1", 4, 4],  # attack 1
-            1: ["m1", 4, "f2", 4, 4],  # attack 2
-            2: ["m1", 4, "f3", 4, 4],  # attack 3
-            3: ["m1", 4, "f4", 4, 4],  # attack 4
-            4: ["m2", 4, "p1", 4, 4, 4],  # pokemon 1
-            5: ["m2", 4, "p2", 4, 4, 4],  # pokemon 2
-            6: ["m2", 4, "p3", 4, 4, 4],  # pokemon 3
-            7: ["m2", 4, "p4", 4, 4, 4],  # pokemon 4
-            8: ["m2", 4, "p5", 4, 4, 4],  # pokemon 5
-            9: ["m2", 4, "p6", 4, 4, 4],  # pokemon 6
+            0: ["m1", 4, "f1", 4],  # attack 1
+            1: ["m1", 4, "f2", 4],  # attack 2
+            2: ["m1", 4, "f3", 4],  # attack 3
+            3: ["m1", 4, "f4", 4],  # attack 4
+            4: ["m2", 4, "p1", 4, 4],  # pokemon 1
+            5: ["m2", 4, "p2", 4, 4],  # pokemon 2
+            6: ["m2", 4, "p3", 4, 4],  # pokemon 3
+            7: ["m2", 4, "p4", 4, 4],  # pokemon 4
+            8: ["m2", 4, "p5", 4, 4],  # pokemon 5
+            9: ["m2", 4, "p6", 4, 4],  # pokemon 6
             10: ["m4", 4, 4],  # run
-            11: ["m3", 4, 4, 4],  # pokeball
+            11: ["m3", 4, 4],  # pokeball
             12: [7]  # pass
             # 13: ["m3", 4, "b2"]         # healing
         }
@@ -44,9 +43,29 @@ class ActionMapper:
         self.fight_menu = 1
         self.pokemon_menu = 1
         self.bag_menu = 1
+    def reset_on_switch(self):
+        self.fight_menu = 1
+        self.menu = 1
+        self.bag_menu = 1
+    def get_action_sequence(self, action, state):
 
-    def get_action_sequence(self, action):
         action_list = self.actions[action]
+        # dead
+
+        if state[0][0] == 0:
+            if not 3 < action < 10:
+                return [7]
+            if action - 3 == self.pokemon_menu:
+                return [7]
+            action_list = action_list[2:]
+        # killed opponent pokemon
+        if state[0][-1] == 0 and state[0][-2] == 0 and state[0][-3] == 0 and state[0][-4] == 0:
+            if not 3 < action < 10:
+                return [7]
+            if action - 3 == self.pokemon_menu:
+                return [7]
+            action_list = action_list[2:]
+
         # transforms action string
         new_list = []
         for l in action_list:
@@ -848,8 +867,17 @@ class StateMapper:
 
     def get_current_pokemon(self, env) -> int:
         for i in range(1, 7):
-            if env.read_m(self.flattened_features["in_battle_player_pokemon_nr"]) == env.read_m(
-                    self.flattened_features[f"player_pokemon{i}_pokemon_nr"]):
+            same_nr = env.read_m(self.flattened_features["in_battle_player_pokemon_nr"]) == env.read_m(
+                    self.flattened_features[f"player_pokemon{i}_pokemon_nr"])
+            same_hp = env.read_m(self.flattened_features[f"player_pokemon{i}_current_hp"]) == env.read_m(
+                    self.flattened_features["in_battle_player_current_hp"])
+            same_attack_ev = env.read_m(self.flattened_features[f"player_pokemon{i}_attack_ev"]) == env.read_m(
+                    self.flattened_features["in_battle_player_attack_ev"])
+            same_defense_ev = env.read_m(self.flattened_features[f"player_pokemon{i}_defense_ev"]) == env.read_m(
+                    self.flattened_features["in_battle_player_defense_ev"])
+            same_attack_defense_iv = env.read_m(self.flattened_features[f"player_pokemon{i}_attack_defense_iv"]) == env.read_m(
+                    self.flattened_features["in_battle_player_attack_defense_iv"])
+            if same_nr and same_hp and same_attack_ev and same_defense_ev and same_attack_defense_iv:
                 return i
 
     def get_number_of_pokeballs(self, env) -> int:
