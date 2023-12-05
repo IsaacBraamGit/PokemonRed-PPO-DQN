@@ -43,10 +43,12 @@ class ActionMapper:
         self.fight_menu = 1
         self.pokemon_menu = 1
         self.bag_menu = 1
+
     def reset_on_switch(self):
         self.fight_menu = 1
         self.menu = 1
         self.bag_menu = 1
+
     def get_action_sequence(self, action, state):
 
         action_list = self.actions[action]
@@ -867,16 +869,16 @@ class StateMapper:
 
     def get_current_pokemon(self, env) -> int:
         for i in range(1, 7):
-            same_nr = env.read_m(self.flattened_features["in_battle_player_pokemon_nr"]) == env.read_m(
-                    self.flattened_features[f"player_pokemon{i}_pokemon_nr"])
-            same_hp = env.read_m(self.flattened_features[f"player_pokemon{i}_current_hp"]) == env.read_m(
-                    self.flattened_features["in_battle_player_current_hp"])
-            same_attack_ev = env.read_m(self.flattened_features[f"player_pokemon{i}_attack_ev"]) == env.read_m(
-                    self.flattened_features["in_battle_player_attack_ev"])
-            same_defense_ev = env.read_m(self.flattened_features[f"player_pokemon{i}_defense_ev"]) == env.read_m(
-                    self.flattened_features["in_battle_player_defense_ev"])
-            same_attack_defense_iv = env.read_m(self.flattened_features[f"player_pokemon{i}_attack_defense_iv"]) == env.read_m(
-                    self.flattened_features["in_battle_player_attack_defense_iv"])
+            same_nr = self.get_feature_value(env, "in_battle_player_pokemon_nr") == \
+                      self.get_feature_value(env, f"player_pokemon{i}_pokemon_nr")
+            same_hp = self.get_feature_value(env, "in_battle_player_hp") == \
+                      self.get_feature_value(env, f"player_pokemon{i}_hp")
+            same_attack_ev = self.get_feature_value(env, "in_battle_player_attack_ev") == \
+                             self.get_feature_value(env, f"player_pokemon{i}_attack_ev")
+            same_defense_ev = self.get_feature_value(env, "in_battle_player_defense_ev") == \
+                              self.get_feature_value(env, f"player_pokemon{i}_defense_ev")
+            same_attack_defense_iv = self.get_feature_value(env, "in_battle_player_attack_defense_iv") == \
+                                     self.get_feature_value(env, f"player_pokemon{i}_attack_defense_iv")
             if same_nr and same_hp and same_attack_ev and same_defense_ev and same_attack_defense_iv:
                 return i
 
@@ -991,8 +993,8 @@ class StateMapper:
             total_items += env.read_m(self.flattened_features[f"items_item_{i}_quantity"])
         return total_items
 
+
 if __name__ == "__main__":
     state_mapper = StateMapper()
     print(state_mapper.get_pokemon_effectiveness(0, 2, 21, 21))
     print(state_mapper.get_pokemon_effectiveness(21, 21, 0, 2))
-
