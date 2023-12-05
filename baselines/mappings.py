@@ -871,15 +871,15 @@ class StateMapper:
         for i in range(1, 7):
             same_nr = self.get_feature_value(env, "in_battle_player_pokemon_nr") == \
                       self.get_feature_value(env, f"player_pokemon{i}_pokemon_nr")
-            same_hp = self.get_feature_value(env, "in_battle_player_hp") == \
-                      self.get_feature_value(env, f"player_pokemon{i}_hp")
-            same_attack_ev = self.get_feature_value(env, "in_battle_player_attack_ev") == \
-                             self.get_feature_value(env, f"player_pokemon{i}_attack_ev")
-            same_defense_ev = self.get_feature_value(env, "in_battle_player_defense_ev") == \
-                              self.get_feature_value(env, f"player_pokemon{i}_defense_ev")
-            same_attack_defense_iv = self.get_feature_value(env, "in_battle_player_attack_defense_iv") == \
-                                     self.get_feature_value(env, f"player_pokemon{i}_attack_defense_iv")
-            if same_nr and same_hp and same_attack_ev and same_defense_ev and same_attack_defense_iv:
+            same_hp = self.get_feature_value(env, "in_battle_player_current_hp") == \
+                      self.get_feature_value(env, f"player_pokemon{i}_current_hp")
+            same_attack = self.get_feature_value(env, "in_battle_player_attack") == \
+                             self.get_feature_value(env, f"player_pokemon{i}_attack")
+            same_defense = self.get_feature_value(env, "in_battle_player_defense") == \
+                              self.get_feature_value(env, f"player_pokemon{i}_defense")
+            same_pp_move1 = self.get_feature_value(env, "in_battle_player_pp_move1") == \
+                                     self.get_feature_value(env, f"player_pokemon{i}_pp_move1")
+            if same_nr and same_hp and same_attack and same_defense and same_pp_move1:
                 return i
 
     def get_number_of_pokeballs(self, env) -> int:
