@@ -56,6 +56,7 @@ class DQNAgent:
         self.enemy_total_experience_weight = 1
         self.player_total_experience_weight = 1
         self.total_items_weight = 1
+        self.acion_invalid_count = 0
 
     def get_latest_version(self):
         max_e = -1
@@ -95,7 +96,7 @@ class DQNAgent:
 
         self.memory.append((state, action, reward, next_state, done))
 
-        line = str((self.e,state, action, reward, next_state, done))
+        line = str((self.e, state, action, reward, next_state, done))
         append_to_file(self.file_path, line)
 
     def act(self, state, test=False):
@@ -110,14 +111,17 @@ class DQNAgent:
             user_input = input("Please enter a number: ")
             action = int(user_input)
 
-
-        print(action)
-        if not self.get_action_validity(action):
-            print("not valid")
-            action = 12  # pass if not valid
+        if self.acion_invalid_count < 40:
+            print(action)
+            if not self.get_action_validity(action):
+                self.acion_invalid_count += 1
+                print("not valid")
+                action = 12  # pass if not valid
+            else:
+                self.acion_invalid_count = 0
 
         print("action:", action)
-        action_list = self.action_mapper.get_action_sequence(action,state)
+        action_list = self.action_mapper.get_action_sequence(action, state)
         print("action_list", action_list)
 
         return action, action_list
@@ -127,7 +131,7 @@ class DQNAgent:
             # Only actions with PP > 0 are valid
             return self.state_mapper.get_feature_value(self.env, f"in_battle_player_pp_move{action + 1}") > 0
         if 4 <= action <= 9:
-            current_pokemon = self.state_mapper.get_current_pokemon(self.env)
+            current_pokemon = self.state_mapper.get_current_pokemon(self.env, self.action_mapper)
             is_switching = action - 3 != current_pokemon
             if not is_switching:
                 return False
@@ -139,7 +143,8 @@ class DQNAgent:
             return self.state_mapper.get_feature_value(self.env, "in_battle_type_of_battle") == 1
         if action == 11:
             # Only valid if more than 0 pokeballs are available
-            return self.state_mapper.get_number_of_pokeballs(self.env) > 0 and self.state_mapper.get_feature_value(self.env,'in_battle_type_of_battle') == 1
+            return self.state_mapper.get_number_of_pokeballs(self.env) > 0 and self.state_mapper.get_feature_value(
+                self.env, 'in_battle_type_of_battle') == 1
 
     def replay(self, batch_size):
         minibatch = random.sample(self.memory, batch_size)
@@ -184,7 +189,6 @@ class DQNAgent:
         if self.epsilon > self.epsilon_min:
             self.epsilon *= self.epsilon_decay
             print("EPSILON", self.epsilon)
-        print("LEARNED")
 
     def load(self):
         model = self._build_model()
@@ -368,10 +372,9 @@ class DQNAgent:
             self.save(f"models/dqn_model_v{version_nr}_{self.e}.h5")
         self.e += 1
         # todo: reset env after a while, long enough?
-        if self.e % 10_000 == 0:
+        if self.e % 5_000 == 0:
             self.env.reset()
         print("e=", self.e, flush=True)
-
 
     """
 def chose_action(env):

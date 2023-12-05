@@ -53,7 +53,7 @@ class ActionMapper:
 
         action_list = self.actions[action]
         # dead
-
+        new_list = []
         if state[0][0] == 0:
             if not 3 < action < 10:
                 return [7]
@@ -69,7 +69,7 @@ class ActionMapper:
             action_list = action_list[2:]
 
         # transforms action string
-        new_list = []
+
         for l in action_list:
             if isinstance(l, str):
                 actions = self.go_to(l)
@@ -93,11 +93,11 @@ class ActionMapper:
                 self.menu += 1
             if want % 2 == 1 and self.menu % 2 == 0:
                 # left
-                list.append(1)
+                list.append(3)
                 self.menu -= 1
             if want < 3 and self.menu > 2:
                 # up
-                list.append(3)
+                list.append(1)
                 self.menu += 2
             if want > 2 and self.menu < 3:
                 # down
@@ -110,11 +110,11 @@ class ActionMapper:
                 return list
             while want > self.fight_menu:
                 # up
-                list.append(3)
+                list.append(0)
                 self.fight_menu += 1
             while want < self.fight_menu:
                 # down
-                list.append(0)
+                list.append(3)
                 self.fight_menu -= 1
             return list
 
@@ -123,11 +123,11 @@ class ActionMapper:
                 return list
             while want > self.pokemon_menu:
                 # up
-                list.append(3)
+                list.append(0)
                 self.pokemon_menu += 1
             while want < self.pokemon_menu:
                 # down
-                list.append(0)
+                list.append(3)
                 self.pokemon_menu -= 1
             return list
 
@@ -867,7 +867,8 @@ class StateMapper:
                     raise ValueError("mem_address is neither int nor list")
         return feature_value
 
-    def get_current_pokemon(self, env) -> int:
+    def get_current_pokemon(self, env, actmap) -> int:
+        return actmap.pokemon_menu
         for i in range(1, 7):
             same_nr = self.get_feature_value(env, "in_battle_player_pokemon_nr") == \
                       self.get_feature_value(env, f"player_pokemon{i}_pokemon_nr")
