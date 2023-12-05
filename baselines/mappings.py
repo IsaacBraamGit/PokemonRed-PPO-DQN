@@ -310,7 +310,8 @@ class StateMapper:
                     "defense": [0xD26D, 0xD26E],
                     "speed": [0xD26F, 0xD270],
                     "special": [0xD271, 0xD272]
-                }
+                },
+                "number_of_pokemon": 0xD163
             },
             "enemy": {
                 "pokemon1": {
@@ -462,7 +463,8 @@ class StateMapper:
                     "defense": [0xD9A6, 0xD9A7],
                     "speed": [0xD9A8, 0xD9A9],
                     "special": [0xD9AA, 0xD9AB]
-                }
+                },
+                "number_of_pokemon": 0xD89C
             },
             "items": {
                 "total_items": 0xD31D,
@@ -948,8 +950,18 @@ class StateMapper:
         else:
             slotbit2 = 0
 
-        return [in_text, in_menu, slotbit1, slotbit2]
+        return [int(in_text), int(in_menu), slotbit1, slotbit2]
 
+    def get_number_of_pokemon(self, env, enemy=False):
+        if enemy:
+            return env.read_m(self.flattened_features["enemy_number_of_pokemon"])
+        return env.read_m(self.flattened_features["player_number_of_pokemon"])
+
+    def get_number_of_items(self, env):
+        total_items = 0
+        for i in range(1, 21):
+            total_items += env.read_m(self.flattened_features[f"items_item_{i}_quantity"])
+        return total_items
 
 if __name__ == "__main__":
     state_mapper = StateMapper()

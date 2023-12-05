@@ -42,6 +42,21 @@ class DQNAgent:
         self.target_model = self._build_target_model()
         self.file_path = f"models/log_dqn_model_v{version_nr}.txt"  # Path to your log file
 
+        # todo: set reward weights
+        self.enemy_health_weight = 1
+        self.enemy_total_health_weight = 1
+        self.player_health_weight = 1
+        self.player_total_health_weight = 1
+        self.enemy_status_weight = 1
+        self.player_status_weight = 1
+        self.enemy_party_size_weight = 1
+        self.player_party_size_weight = 1
+        self.enemy_total_level_weight = 1
+        self.player_total_level_weight = 1
+        self.enemy_total_experience_weight = 1
+        self.player_total_experience_weight = 1
+        self.total_items_weight = 1
+
     def get_latest_version(self):
         max_e = -1
         latest_model_path = None
@@ -228,27 +243,35 @@ class DQNAgent:
         for i in range(1, 7):
             pokemon_hp = feature_values[f"player_pokemon{i}_current_hp"]
             pokemon_max_hp = feature_values[f"player_pokemon{i}_max_hp"]
+            pokemon_level = feature_values[f"player_pokemon{i}_actual_level"]
+            pokemon_experience = feature_values[f"player_pokemon{i}_experience"]
             pokemon_type1 = feature_values[f"player_pokemon{i}_type1"]
             pokemon_type2 = feature_values[f"player_pokemon{i}_type2"]
             pokemon_effectiveness = self.state_mapper.get_pokemon_effectiveness(pokemon_type1, pokemon_type2,
                                                                                 enemy_type1, enemy_type2)
 
             state.extend([
-                pokemon_hp, pokemon_max_hp, pokemon_effectiveness
+                pokemon_hp, pokemon_max_hp, pokemon_level, pokemon_experience, pokemon_effectiveness
             ])
+
+        state.append(self.state_mapper.get_number_of_pokemon(self.env, enemy=False))
 
         # Enemy Pokemon out of battle
         for i in range(1, 7):
             pokemon_hp = feature_values[f"enemy_pokemon{i}_current_hp"]
             pokemon_max_hp = feature_values[f"enemy_pokemon{i}_max_hp"]
+            pokemon_level = feature_values[f"enemy_pokemon{i}_actual_level"]
+            pokemon_experience = feature_values[f"enemy_pokemon{i}_experience"]
             pokemon_type1 = feature_values[f"enemy_pokemon{i}_type1"]
             pokemon_type2 = feature_values[f"enemy_pokemon{i}_type2"]
             pokemon_effectiveness = self.state_mapper.get_pokemon_effectiveness(pokemon_type1, pokemon_type2,
                                                                                 player_type1, player_type2)
 
             state.extend([
-                pokemon_hp, pokemon_max_hp, pokemon_effectiveness
+                pokemon_hp, pokemon_max_hp, pokemon_level, pokemon_experience, pokemon_effectiveness
             ])
+
+        state.append(self.state_mapper.get_number_of_pokemon(self.env, enemy=True))
 
         # Player current moves
         for i in range(1, 5):
@@ -269,22 +292,55 @@ class DQNAgent:
         # Add positioning in menus
         state.extend(self.state_mapper.get_positional_data(self.env))
 
+        # Add number of pokeballs
+        state.append(self.state_mapper.get_number_of_pokeballs(self.env))
+
+        # Add number of items
+        state.append(self.state_mapper.get_number_of_items(self.env))
+
         return np.reshape(state, [1, len(state)])
 
     def get_reward(self, state, next_state):
-        # todo: how do we measure stat drops, so it is represented in the state, so we can learn it?
-        # health of opponent
-        score = state[0][9] - next_state[0][9]
+        # Enemy
+        enemy_health = next_state[0][17] - state[0][17]
+        enemy_total_health = sum(next_state[0][i + 61] for i in range(0, 7, 5)) - sum(
+            state[0][i + 61] for i in range(0, 7, 5))
+        enemy_status = sum(next_state[0][i + 19] for i in range(7)) - sum(state[0][i + 19] for i in range(7))
+        enemy_party_size = next_state[0][91] - state[0][91]
+        enemy_total_level = sum(next_state[0][i + 63] for i in range(0, 7, 5)) - sum(
+            state[0][i + 63] for i in range(0, 7, 5))
+        enemy_total_experience = sum(next_state[0][i + 64] for i in range(0, 7, 5)) - sum(
+            state[0][i + 64] for i in range(0, 7, 5))
 
-        # punishment for doing somehing that does nothing
-        if (state == next_state).all():
-            score -= 0.1
+        # Player
+        player_health = next_state[0][0] - state[0][0]
+        player_total_health = sum(next_state[0][i + 30] for i in range(0, 7, 5)) - sum(
+            state[0][i + 30] for i in range(0, 7, 5))
+        player_status = sum(next_state[0][i + 2] for i in range(7)) - sum(state[0][i + 2] for i in range(7))
+        player_party_size = next_state[0][60] - state[0][60]
+        player_total_level = sum(next_state[0][i + 32] for i in range(0, 7, 5)) - sum(
+            state[0][i + 32] for i in range(0, 7, 5))
+        player_total_experience = sum(next_state[0][i + 33] for i in range(0, 7, 5)) - sum(
+            state[0][i + 33] for i in range(0, 7, 5))
 
-        # running away is for cowards
-        if state[0][12] and state[0][13]:
-            score -= 2
+        total_items = next_state[0][110] - state[0][110]
 
-        # todo: don't use a powerfull move when you don't have to, how do we make it worthwhile to switch?
+        score = (
+                - self.enemy_health_weight * enemy_health
+                - self.enemy_total_health_weight * enemy_total_health
+                + self.enemy_status_weight * enemy_status
+                - self.enemy_party_size_weight * enemy_party_size
+                - self.enemy_total_level_weight * enemy_total_level
+                - self.enemy_total_experience_weight * enemy_total_experience
+                + self.player_health_weight * player_health
+                + self.player_total_health_weight * player_total_health
+                - self.player_status_weight * player_status
+                + self.player_party_size_weight * player_party_size
+                + self.player_total_level_weight * player_total_level
+                + self.player_total_experience_weight * player_total_experience
+                - self.total_items_weight * total_items
+        )
+
         print("score:", flush=True)
         print(score, flush=True)
         score = score * 100
