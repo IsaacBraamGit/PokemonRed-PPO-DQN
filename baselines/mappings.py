@@ -628,7 +628,7 @@ class StateMapper:
 
         self.move_mappings = {1: 'Pound', 2: 'Karate Chop', 3: 'Double Slap', 4: 'Comet Punch', 5: 'Mega Punch',
                               6: 'Pay Day', 7: 'Fire Punch', 8: 'Ice Punch', 9: 'Thunder Punch', 10: 'Scratch',
-                              11: 'Vise Grip', 12: 'Guillotine', 13: 'Razor Wind', 14: 'Swords Dance', 15: 'Cut',
+                              11: 'Vicegrip', 12: 'Guillotine', 13: 'Razor Wind', 14: 'Swords Dance', 15: 'Cut',
                               16: 'Gust', 17: 'Wing Attack', 18: 'Whirlwind', 19: 'Fly', 20: 'Bind', 21: 'Slam',
                               22: 'Vine Whip', 23: 'Stomp', 24: 'Double Kick', 25: 'Mega Kick', 26: 'Jump Kick',
                               27: 'Rolling Kick', 28: 'Sand Attack', 29: 'Headbutt', 30: 'Horn Attack',
@@ -637,12 +637,12 @@ class StateMapper:
                               41: 'Twineedle', 42: 'Pin Missile', 43: 'Leer', 44: 'Bite', 45: 'Growl', 46: 'Roar',
                               47: 'Sing', 48: 'Supersonic', 49: 'Sonic Boom', 50: 'Disable', 51: 'Acid', 52: 'Ember',
                               53: 'Flamethrower', 54: 'Mist', 55: 'Water Gun', 56: 'Hydro Pump', 57: 'Surf',
-                              58: 'Ice Beam', 59: 'Blizzard', 60: 'Psybeam', 61: 'Bubble Beam', 62: 'Aurora Beam',
+                              58: 'Ice Beam', 59: 'Blizzard', 60: 'Psybeam', 61: 'Bubblebeam', 62: 'Aurora Beam',
                               63: 'Hyper Beam', 64: 'Peck', 65: 'Drill Peck', 66: 'Submission', 67: 'Low Kick',
                               68: 'Counter', 69: 'Seismic Toss', 70: 'Strength', 71: 'Absorb', 72: 'Mega Drain',
                               73: 'Leech Seed', 74: 'Growth', 75: 'Razor Leaf', 76: 'Solar Beam', 77: 'Poison Powder',
                               78: 'Stun Spore', 79: 'Sleep Powder', 80: 'Petal Dance', 81: 'String Shot',
-                              82: 'Dragon Rage', 83: 'Fire Spin', 84: 'Thunder Shock', 85: 'Thunderbolt',
+                              82: 'Dragon Rage', 83: 'Fire Spin', 84: 'Thunder Shock', 85: 'Thunder Bolt',
                               86: 'Thunder Wave', 87: 'Thunder', 88: 'Rock Throw', 89: 'Earthquake', 90: 'Fissure',
                               91: 'Dig', 92: 'Toxic', 93: 'Confusion', 94: 'Psychic', 95: 'Hypnosis', 96: 'Meditate',
                               97: 'Agility', 98: 'Quick Attack', 99: 'Rage', 100: 'Teleport', 101: 'Night Shade',
@@ -693,7 +693,7 @@ class StateMapper:
                              'Dizzy Punch': {'Type': 'Normal', 'Power': 70, 'Accuracy': 1.0},
                              'Double-Edge': {'Type': 'Normal', 'Power': 100, 'Accuracy': 1.0},
                              'Double Kick': {'Type': 'Fighting', 'Power': 30, 'Accuracy': 1.0},
-                             'Doubleslap': {'Type': 'Normal', 'Power': 15, 'Accuracy': 0.85},
+                             'Double Slap': {'Type': 'Normal', 'Power': 15, 'Accuracy': 0.85},
                              'Double Team': {'Type': 'Normal', 'Power': 0, 'Accuracy': 1.0},
                              'Dragon Rage': {'Type': 'Dragon', 'Power': 0, 'Accuracy': 1.0},
                              'Dream Eater': {'Type': 'Psychic', 'Power': 100, 'Accuracy': 1.0},
@@ -720,7 +720,7 @@ class StateMapper:
                              'Harden': {'Type': 'Normal', 'Power': 0, 'Accuracy': 1.0},
                              'Haze': {'Type': 'Ice', 'Power': 70, 'Accuracy': 1.0},
                              'Headbutt': {'Type': 'Normal', 'Power': 70, 'Accuracy': 1.0},
-                             'Hi Jump Kick': {'Type': 'Fighting', 'Power': 85, 'Accuracy': 0.9},
+                             'High Jump Kick': {'Type': 'Fighting', 'Power': 85, 'Accuracy': 0.9},
                              'Horn Attack': {'Type': 'Normal', 'Power': 65, 'Accuracy': 1.0},
                              'Horn Drill': {'Type': 'Normal', 'Power': 0, 'Accuracy': 0.3},
                              'Hydro Pump': {'Type': 'Water', 'Power': 120, 'Accuracy': 0.8},
@@ -754,7 +754,7 @@ class StateMapper:
                              'Petal Dance': {'Type': 'Grass', 'Power': 90, 'Accuracy': 1.0},
                              'Pin Missile': {'Type': 'Bug', 'Power': 14, 'Accuracy': 0.85},
                              'Poison Gas': {'Type': 'Poison', 'Power': 0, 'Accuracy': 0.55},
-                             'Poisonpowder': {'Type': 'Poison', 'Power': 0, 'Accuracy': 0.75},
+                             'Poison Powder': {'Type': 'Poison', 'Power': 0, 'Accuracy': 0.75},
                              'Poison Sting': {'Type': 'Poison', 'Power': 15, 'Accuracy': 1.0},
                              'Pound': {'Type': 'Normal', 'Power': 40, 'Accuracy': 1.0},
                              'Psybeam': {'Type': 'Psychic', 'Power': 65, 'Accuracy': 1.0},
@@ -771,11 +771,11 @@ class StateMapper:
                              'Rock Slide': {'Type': 'Rock', 'Power': 75, 'Accuracy': 0.9},
                              'Rock Throw': {'Type': 'Rock', 'Power': 50, 'Accuracy': 0.9},
                              'Rolling Kick': {'Type': 'Fighting', 'Power': 60, 'Accuracy': 0.85},
-                             'Sand-Attack': {'Type': 'Ground', 'Power': 0, 'Accuracy': 1.0},
+                             'Sand Attack': {'Type': 'Ground', 'Power': 0, 'Accuracy': 1.0},
                              'Scratch': {'Type': 'Normal', 'Power': 40, 'Accuracy': 1.0},
                              'Screech': {'Type': 'Normal', 'Power': 0, 'Accuracy': 0.85},
                              'Seismic Toss': {'Type': 'Fighting', 'Power': 0, 'Accuracy': 1.0},
-                             'Selfdestruct': {'Type': 'Normal', 'Power': 130, 'Accuracy': 1.0},
+                             'Self-Destruct': {'Type': 'Normal', 'Power': 130, 'Accuracy': 1.0},
                              'Sharpen': {'Type': 'Normal', 'Power': 0, 'Accuracy': 1.0},
                              'Sing': {'Type': 'Normal', 'Power': 0, 'Accuracy': 0.55},
                              'Skull Bash': {'Type': 'Normal', 'Power': 100, 'Accuracy': 1.0},
@@ -786,9 +786,9 @@ class StateMapper:
                              'Sludge': {'Type': 'Poison', 'Power': 65, 'Accuracy': 1.0},
                              'Smog': {'Type': 'Poison', 'Power': 20, 'Accuracy': 0.7},
                              'Smokescreen': {'Type': 'Poison', 'Power': 0, 'Accuracy': 1.0},
-                             'Softboiled': {'Type': 'Normal', 'Power': 0, 'Accuracy': 1.0},
-                             'Solarbeam': {'Type': 'Grass', 'Power': 120, 'Accuracy': 1.0},
-                             'Sonicboom': {'Type': 'Normal', 'Power': 0, 'Accuracy': 0.9},
+                             'Soft-Boiled': {'Type': 'Normal', 'Power': 0, 'Accuracy': 1.0},
+                             'Solar Beam': {'Type': 'Grass', 'Power': 120, 'Accuracy': 1.0},
+                             'Sonic Boom': {'Type': 'Normal', 'Power': 0, 'Accuracy': 0.9},
                              'Spike Cannon': {'Type': 'Normal', 'Power': 20, 'Accuracy': 1.0},
                              'Splash': {'Type': 'Normal', 'Power': 0, 'Accuracy': 1.0},
                              'Spore': {'Type': 'Grass', 'Power': 0, 'Accuracy': 1.0},
@@ -810,9 +810,9 @@ class StateMapper:
                              'Teleport': {'Type': 'Psychic', 'Power': 0, 'Accuracy': 1.0},
                              'Thrash': {'Type': 'Normal', 'Power': 90, 'Accuracy': 1.0},
                              'Thunder': {'Type': 'Electric', 'Power': 120, 'Accuracy': 0.7},
-                             'Thunderbolt': {'Type': 'Electric', 'Power': 95, 'Accuracy': 1.0},
-                             'Thunderpunch': {'Type': 'Electric', 'Power': 75, 'Accuracy': 1.0},
-                             'Thundershock': {'Type': 'Electric', 'Power': 40, 'Accuracy': 1.0},
+                             'Thunder Bolt': {'Type': 'Electric', 'Power': 95, 'Accuracy': 1.0},
+                             'Thunder Punch': {'Type': 'Electric', 'Power': 75, 'Accuracy': 1.0},
+                             'Thunder Shock': {'Type': 'Electric', 'Power': 40, 'Accuracy': 1.0},
                              'Thunder Wave': {'Type': 'Electric', 'Power': 0, 'Accuracy': 1.0},
                              'Toxic': {'Type': 'Poison', 'Power': 0, 'Accuracy': 0.85},
                              'Transform': {'Type': 'Normal', 'Power': 0, 'Accuracy': 1.0},
@@ -917,7 +917,11 @@ class StateMapper:
     def get_move_details(self, move_id):
         if move_id == 0:
             return None
-        return self.move_details[self.move_mappings[move_id]]
+        try:
+            move = self.move_mappings[move_id]
+        except KeyError:
+            move = self.move_mappings[1]
+        return self.move_details[move]
 
     def get_move_effectiveness(self, move_type: str, def_type1: int, def_type2: int):
         if def_type1 == def_type2:

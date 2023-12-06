@@ -5,11 +5,13 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="2af7fbdf-27c0-4c0b-a3d9-bb7b6f466e36" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/baselines/PLOT.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/baselines/check moves.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/baselines/PLOT.py" beforeDir="false" afterPath="$PROJECT_DIR$/baselines/PLOT.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/baselines/_our_model.py" beforeDir="false" afterPath="$PROJECT_DIR$/baselines/_our_model.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/baselines/isaac_session/curframe_f78ccbca.jpeg" beforeDir="false" afterPath="$PROJECT_DIR$/baselines/isaac_session/curframe_f78ccbca.jpeg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/baselines/util.py" beforeDir="false" afterPath="$PROJECT_DIR$/baselines/util.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/baselines/isaac_session/curframe_002841b1.jpeg" beforeDir="false" afterPath="$PROJECT_DIR$/baselines/isaac_session/curframe_002841b1.jpeg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/baselines/mappings.py" beforeDir="false" afterPath="$PROJECT_DIR$/baselines/mappings.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/baselines/models/log_dqn_model_v1.0.txt" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -64,7 +66,7 @@
     </key>
   </component>
   <component name="RunManager" selected="Python.run_pretrained_interactive">
-    <configuration name="_our_model" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+    <configuration name="PLOT" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="PokemonRedExperiments-master" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -77,7 +79,29 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/baselines/_our_model.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/baselines/PLOT.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="check moves" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="PokemonRedExperiments-master" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/baselines" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/baselines/check moves.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -100,28 +124,6 @@
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/baselines/mappings.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-      <option name="REDIRECT_INPUT" value="false" />
-      <option name="INPUT_FILE" value="" />
-      <method v="2" />
-    </configuration>
-    <configuration name="red_gym_env" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
-      <module name="PokemonRedExperiments-master" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/baselines" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/baselines/red_gym_env.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -177,10 +179,10 @@
     <recent_temporary>
       <list>
         <item itemvalue="Python.run_pretrained_interactive" />
+        <item itemvalue="Python.PLOT" />
+        <item itemvalue="Python.check moves" />
         <item itemvalue="Python.mappings" />
         <item itemvalue="Python.test" />
-        <item itemvalue="Python._our_model" />
-        <item itemvalue="Python.red_gym_env" />
       </list>
     </recent_temporary>
   </component>
@@ -218,10 +220,12 @@
     </breakpoint-manager>
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/PokemonRedExperiments_master$run_pretrained_interactive.coverage" NAME="run_pretrained_interactive Coverage Results" MODIFIED="1701885284540" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/baselines" />
+    <SUITE FILE_PATH="coverage/PokemonRedExperiments_master$check_moves.coverage" NAME="check moves Coverage Results" MODIFIED="1701889349946" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/baselines" />
+    <SUITE FILE_PATH="coverage/PokemonRedExperiments_master$run_pretrained_interactive.coverage" NAME="run_pretrained_interactive Coverage Results" MODIFIED="1701889648112" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/baselines" />
     <SUITE FILE_PATH="coverage/PokemonRedExperiments_master$mappings.coverage" NAME="mappings Coverage Results" MODIFIED="1701856559429" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/baselines" />
     <SUITE FILE_PATH="coverage/PokemonRedExperiments_master$run_baseline_parallel_fast.coverage" NAME="run_baseline_parallel_fast Coverage Results" MODIFIED="1699471068449" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/baselines" />
     <SUITE FILE_PATH="coverage/PokemonRedExperiments_master$_our_model.coverage" NAME="_our_model Coverage Results" MODIFIED="1699618953966" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/baselines" />
+    <SUITE FILE_PATH="coverage/PokemonRedExperiments_master$PLOT.coverage" NAME="PLOT Coverage Results" MODIFIED="1701890308352" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/baselines" />
     <SUITE FILE_PATH="coverage/PokemonRedExperiments_master$test.coverage" NAME="test Coverage Results" MODIFIED="1699709092279" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/PokemonRedExperiments_master$util.coverage" NAME="util Coverage Results" MODIFIED="1701365885982" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/baselines" />
     <SUITE FILE_PATH="coverage/PokemonRedExperiments_master$red_gym_env.coverage" NAME="red_gym_env Coverage Results" MODIFIED="1699369317782" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/baselines" />

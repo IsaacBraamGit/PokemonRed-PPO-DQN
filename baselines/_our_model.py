@@ -326,13 +326,13 @@ class DQNAgent:
         total_items = next_state[0][106] - state[0][106]
 
         score = (
-                - self.enemy_health_weight * enemy_health
+                #- self.enemy_health_weight * enemy_health
                 - self.enemy_total_health_weight * enemy_total_health
                 + self.enemy_status_weight * enemy_status
                 - self.enemy_party_size_weight * enemy_party_size
                 - self.enemy_total_level_weight * enemy_total_level
-                - self.enemy_total_experience_weight * enemy_total_experience
-                + self.player_health_weight * player_health
+                #- self.enemy_total_experience_weight * enemy_total_experience
+                #+ self.player_health_weight * player_health
                 + self.player_total_health_weight * player_total_health
                 - self.player_status_weight * player_status
                 + self.player_party_size_weight * player_party_size
@@ -340,6 +340,8 @@ class DQNAgent:
                 + self.player_total_experience_weight * player_total_experience
                 - self.total_items_weight * total_items
         )
+        if score < -100:
+            print(score)
 
         print("score:", flush=True)
         print(score, flush=True)
