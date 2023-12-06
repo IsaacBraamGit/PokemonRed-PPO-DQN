@@ -44,7 +44,7 @@ def perform_actions_in_env(overall_action,action_list, env, small_agent, pokemon
             print(state[0][-4])
             #14 9 correct?
             if health == 0:
-                while (y_pos == 10 and x_pos == 14) or (y_pos == 12 and x_pos ==12):
+                while (y_pos == 10 and x_pos == 14) or (y_pos == 12 and x_pos ==12) or (y_pos == 14 and x_pos ==15):
                     print("HERE3")
                     obs, rewards, terminated, truncated, info = env.step(4)
                     env.wait(100)

@@ -54,7 +54,7 @@ class DQNAgent:
         self.enemy_total_level_weight = 1
         self.player_total_level_weight = 1
         self.enemy_total_experience_weight = 1
-        self.player_total_experience_weight = 1
+        self.player_total_experience_weight = 0.01
         self.total_items_weight = 1
         self.wanted_action = 7
     def get_latest_version(self):
@@ -325,6 +325,9 @@ class DQNAgent:
 
         total_items = next_state[0][106] - state[0][106]
 
+        if player_total_level != 0:
+            player_total_experience = 0
+
         score = (
                 #- self.enemy_health_weight * enemy_health
                 - self.enemy_total_health_weight * enemy_total_health
@@ -337,7 +340,7 @@ class DQNAgent:
                 - self.player_status_weight * player_status
                 + self.player_party_size_weight * player_party_size
                 + self.player_total_level_weight * player_total_level
-                + self.player_total_experience_weight * player_total_experience
+                + self.player_total_experience_weight * player_total_experience#other way around?
                 - self.total_items_weight * total_items
         )
         if score < -100:
@@ -360,7 +363,6 @@ class DQNAgent:
         # state = next_state
         if done:
             self.save(f"models/dqn_model_v{version_nr}_{self.e}.h5")
-            print(f"Episode: {self.e} ")
 
         if len(self.memory) > self.batch_size and self.e % 3 == 0:
             # self.replay(self.batch_size)
