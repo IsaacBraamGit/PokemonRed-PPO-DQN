@@ -54,3 +54,18 @@ plt.title('Rewards Over Episodes')
 plt.legend()
 plt.savefig("rewards")
 plt.show()
+
+def moving_average(data, window_size):
+    """ Calculate the moving average over a specific window size. """
+    return np.convolve(data, np.ones(window_size)/window_size, mode='valid')
+
+smoothed = moving_average(rewards, 100)
+
+plt.figure(figsize=(12, 6))
+plt.plot(smoothed, label='Rewards')
+plt.xlabel('Episodes')
+plt.ylabel('Reward')
+plt.title('Smoothed Rewards Over Episodes')
+plt.legend()
+plt.savefig("smoothed rewards")
+plt.show()

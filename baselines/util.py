@@ -1,7 +1,15 @@
 
 pokemon_caught = 1
 
-
+names = [
+    [4,0,0,2,2,4,3,1,4,3,2,2,2,4,2,2,2,2,0,0,0],
+    [0,0,2,4,1,3,1,3,1,4,1,1,0,4,1,1,4,3,1,1,1,4,0,0,4,0,0,1]
+]
+def write_names(nr, env):
+    name = names[nr%len(names)]
+    for a in name:
+        env.step(a)
+        env.wait(10)
 def handle_text():
     return
 
@@ -25,14 +33,11 @@ def perform_actions_in_env(overall_action,action_list, env, small_agent, pokemon
     print(y_pos)
     print(x_pos)
     state = small_agent.get_state()
-    print(state[0][-4])
     while ((menu == 0 or (menu == 1 and slotbit2 == 1)) and battle_status >= 1) or (y_pos == 1 and x_pos == 3):
         y_pos = env.read_m(0xCC24)
         x_pos = env.read_m(0xCC25)
 
         if health == 0 and menu == 1 and slotbit2 == 1:
-            env.wait(100)
-            #obs, rewards, terminated, truncated, info = env.step(4)
             env.wait(100)
 
             health = state[0][0]
@@ -41,10 +46,9 @@ def perform_actions_in_env(overall_action,action_list, env, small_agent, pokemon
             print("pos2")
             print(y_pos)
             print(x_pos)
-            print(state[0][-4])
             #14 9 correct?
             if health == 0:
-                while (y_pos == 10 and x_pos == 14) or (y_pos == 12 and x_pos ==12) or (y_pos == 14 and x_pos ==15):
+                while (y_pos == 10 and x_pos == 14) or (y_pos == 12 and x_pos == 12) or (y_pos == 14 and x_pos == 15):
                     print("HERE3")
                     obs, rewards, terminated, truncated, info = env.step(4)
                     env.wait(100)
@@ -55,6 +59,9 @@ def perform_actions_in_env(overall_action,action_list, env, small_agent, pokemon
                     print("pos3")
                     print(y_pos)
                     print(x_pos)
+            if (y_pos == 1 and x_pos == 0):
+                obs, rewards, terminated, truncated, info = env.step(5)
+                env.wait(30)
             return obs, rewards, terminated, truncated, info, pokemon_caught
 
         else:
@@ -70,9 +77,10 @@ def perform_actions_in_env(overall_action,action_list, env, small_agent, pokemon
         # name pokemon
         if overall_action == 11:
             if health != 0 and y_pos == 3 and x_pos == 1 and not pokemon_named and overall_action == 11:
-                for i in range(0,pokemon_caught):
-                    obs, rewards, terminated, truncated, info = env.step(2)
-                    env.wait(100)
+                write_names(pokemon_caught, env)
+                #for i in range(0,pokemon_caught):
+                    #obs, rewards, terminated, truncated, info = env.step(2)
+                    #env.wait(100)
                 pokemon_caught += 1
                 pokemon_named = True
         battle_status = env.read_m(0xD057)

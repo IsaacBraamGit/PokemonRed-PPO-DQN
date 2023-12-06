@@ -56,7 +56,9 @@ class DQNAgent:
         self.enemy_total_experience_weight = 1
         self.player_total_experience_weight = 0.01
         self.total_items_weight = 1
+
         self.wanted_action = 7
+        self.not_val_nr = 0
     def get_latest_version(self):
         max_e = -1
         latest_model_path = None
@@ -109,12 +111,22 @@ class DQNAgent:
         if test:
             user_input = input("Please enter a number: ")
             action = int(user_input)
+
+            
+
+
         print("w_act: ", action)
         self.wanted_action = action
         if not self.get_action_validity(action):
             print("not valid")
             action = 12  # pass if not valid
-
+            self.not_val_nr += 1
+        else:
+            self.not_val_nr = 0
+        if self.not_val_nr > 100:
+            print("STUCK")
+            self.env.reset()
+            return 12, [7]
         print("action:", action)
         action_list = self.action_mapper.get_action_sequence(action, state)
         print("action_list", action_list)
@@ -367,7 +379,7 @@ class DQNAgent:
         if len(self.memory) > self.batch_size and self.e % 3 == 0:
             # self.replay(self.batch_size)
             self.executor.submit(self.replay, self.batch_size)
-        if self.e % 2000 == 0 and self.e != 0:
+        if self.e % 2_000 == 0 and self.e != 0:
             self.save(f"models/dqn_model_v{version_nr}_{self.e}.h5")
         self.e += 1
         # todo: reset env after a while, long enough?

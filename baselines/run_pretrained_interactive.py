@@ -70,7 +70,7 @@ if __name__ == '__main__':
                 obs, rewards, terminated, truncated, info = env.step(action_big_model)
                 env.render()
 
-            if step % 30_000 == 0 and step != 0:
+            if step % 100_000 == 0 and step != 0:
                 env.reset()
             if truncated:
                 break
