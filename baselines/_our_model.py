@@ -26,7 +26,7 @@ class DQNAgent:
         self.state_mapper = mappings.StateMapper()
         self.action_size = self.action_mapper.action_size
         self.memory_total = []
-        self.memory = deque(maxlen=10000)
+        self.memory = deque(maxlen=10_000)
         self.gamma = 0.7  # discount rate
         self.epsilon = 1  # exploration rate
         self.epsilon_min = 0.01
@@ -56,9 +56,7 @@ class DQNAgent:
         self.enemy_total_experience_weight = 1
         self.player_total_experience_weight = 1
         self.total_items_weight = 1
-        self.acion_invalid_count = 0
-        self.last_valid = [7]
-
+        self.wanted_action = 7
     def get_latest_version(self):
         max_e = -1
         latest_model_path = None
@@ -97,7 +95,7 @@ class DQNAgent:
 
         self.memory.append((state, action, reward, next_state, done))
 
-        line = str((self.e, state, action, reward, next_state, done))
+        line = str((self.e, state, action, reward, next_state, done,self.epsilon))
         append_to_file(self.file_path, line)
 
     def act(self, state, test=False):
@@ -111,10 +109,9 @@ class DQNAgent:
         if test:
             user_input = input("Please enter a number: ")
             action = int(user_input)
-
-
+        print("w_act: ", action)
+        self.wanted_action = action
         if not self.get_action_validity(action):
-            self.acion_invalid_count += 1
             print("not valid")
             action = 12  # pass if not valid
 
@@ -356,7 +353,7 @@ class DQNAgent:
 
         reward = self.get_reward(state, next_state)
         # Store the experience in memory
-        self.remember(state, action, reward, next_state, done)
+        self.remember(state, self.wanted_action, reward, next_state, done)
 
         # state = next_state
         if done:
