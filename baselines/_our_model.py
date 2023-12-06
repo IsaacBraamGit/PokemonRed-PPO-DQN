@@ -49,11 +49,11 @@ class DQNAgent:
         self.player_total_health_weight = 1
         self.enemy_status_weight = 1
         self.player_status_weight = 1
-        self.enemy_party_size_weight = 1
-        self.player_party_size_weight = 1
+        self.enemy_party_size_weight = 10
+        self.player_party_size_weight = 10
         self.enemy_total_level_weight = 1
-        self.player_total_level_weight = 1
-        self.enemy_total_experience_weight = 1
+        self.player_total_level_weight = 10
+        #self.enemy_total_experience_weight = 1
         self.player_total_experience_weight = 0.01
         self.total_items_weight = 1
 
@@ -112,7 +112,8 @@ class DQNAgent:
             user_input = input("Please enter a number: ")
             action = int(user_input)
 
-            
+        if self.e < 2:
+            action = 11
 
 
         print("w_act: ", action)
@@ -125,7 +126,9 @@ class DQNAgent:
             self.not_val_nr = 0
         if self.not_val_nr > 100:
             print("STUCK")
+            self.e = 0
             self.env.reset()
+
             return 12, [7]
         print("action:", action)
         action_list = self.action_mapper.get_action_sequence(action, state)
@@ -341,9 +344,9 @@ class DQNAgent:
             player_total_experience = 0
 
         score = (
-                #- self.enemy_health_weight * enemy_health
-                - self.enemy_total_health_weight * enemy_total_health
-                + self.enemy_status_weight * enemy_status
+                - self.enemy_health_weight * enemy_health
+                - self.enemy_total_health_weight * enemy_total_health #todo: werkt niet
+                + self.enemy_status_weight * enemy_status #todo: werkt niet
                 - self.enemy_party_size_weight * enemy_party_size
                 - self.enemy_total_level_weight * enemy_total_level
                 #- self.enemy_total_experience_weight * enemy_total_experience
@@ -351,11 +354,13 @@ class DQNAgent:
                 + self.player_total_health_weight * player_total_health
                 - self.player_status_weight * player_status
                 + self.player_party_size_weight * player_party_size
-                + self.player_total_level_weight * player_total_level
+
+                + self.player_total_level_weight * player_total_level#todo: add measurement of how good pokemon is (base_stats? rank?)
                 + self.player_total_experience_weight * player_total_experience#other way around?
-                - self.total_items_weight * total_items
+                + self.total_items_weight * total_items
+
         )
-        if score < -100:
+        if  score != 0:
             print(score)
 
         print("score:", flush=True)
@@ -384,6 +389,7 @@ class DQNAgent:
         self.e += 1
         # todo: reset env after a while, long enough?
         if self.e % 5_000 == 0:
+            self.e = 0
             self.env.reset()
         print("e=", self.e, flush=True)
 
