@@ -9,7 +9,7 @@ def handle_text():
 def perform_actions_in_env(overall_action,action_list, env, small_agent, pokemon_caught):
     pokemon_named = False
     for action in action_list:
-        env.wait(100)
+        env.wait(50)
         obs, rewards, terminated, truncated, info = env.step(action)
     env.wait(100)
 
@@ -21,6 +21,9 @@ def perform_actions_in_env(overall_action,action_list, env, small_agent, pokemon
     battle_status = 1
     y_pos = env.read_m(0xCC24)
     x_pos = env.read_m(0xCC25)
+    print("pos")
+    print(y_pos)
+    print(x_pos)
     while ((menu == 0 or (menu == 1 and slotbit2 == 1)) and battle_status >= 1) or (y_pos == 1 and x_pos == 3):
         y_pos = env.read_m(0xCC24)
         x_pos = env.read_m(0xCC25)
@@ -29,6 +32,18 @@ def perform_actions_in_env(overall_action,action_list, env, small_agent, pokemon
             env.wait(100)
             obs, rewards, terminated, truncated, info = env.step(4)
             env.wait(100)
+
+            env.wait(30)
+            health = state[0][0]
+            y_pos = env.read_m(0xCC24)
+            x_pos = env.read_m(0xCC25)
+            print("pos2")
+            print(y_pos)
+            print(x_pos)
+            if health == 0 and y_pos == 1 and x_pos == 0:
+                print("HERE3")
+                obs, rewards, terminated, truncated, info = env.step(4)
+                env.wait(50)
             return obs, rewards, terminated, truncated, info, pokemon_caught
 
         else:
@@ -53,6 +68,4 @@ def perform_actions_in_env(overall_action,action_list, env, small_agent, pokemon
         obs, rewards, terminated, truncated, info = env.step(4)
         state = small_agent.get_state()
         menu, slotbit2, health = state[0][-3], state[0][-1], state[0][0]
-    # todo: sometimes the enemy is faster than us and we need to wait after another action
-    #obs, rewards, terminated, truncated, info = env.step(4)
     return obs, rewards, terminated, truncated, info, pokemon_caught

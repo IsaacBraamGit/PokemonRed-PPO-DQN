@@ -112,18 +112,11 @@ class DQNAgent:
             user_input = input("Please enter a number: ")
             action = int(user_input)
 
-        if self.acion_invalid_count < 40:
-            print(action)
-            if not self.get_action_validity(action):
-                self.acion_invalid_count += 1
-                print("not valid")
-                action = 12  # pass if not valid
-            else:
-                self.last_valid = self.action_mapper.get_action_sequence(action, state)
-                self.acion_invalid_count = 0
-        else:
-            self.acion_invalid_count = 0
-            return action, self.last_valid
+
+        if not self.get_action_validity(action):
+            self.acion_invalid_count += 1
+            print("not valid")
+            action = 12  # pass if not valid
 
         print("action:", action)
         action_list = self.action_mapper.get_action_sequence(action, state)

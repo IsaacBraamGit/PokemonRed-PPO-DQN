@@ -91,7 +91,7 @@ class ActionMapper:
                 # right
                 list.append(2)
                 self.menu += 1
-            if want % 2 == 1 and self.menu % 2 == 0:
+            elif want % 2 == 1 and self.menu % 2 == 0:
                 # left
                 list.append(3)
                 self.menu -= 1
@@ -99,7 +99,7 @@ class ActionMapper:
                 # up
                 list.append(1)
                 self.menu += 2
-            if want > 2 and self.menu < 3:
+            elif want > 2 and self.menu < 3:
                 # down
                 list.append(0)
                 self.menu -= 1
