@@ -9,7 +9,7 @@ import os
 import re
 import mappings
 
-version_nr = 1.0
+version_nr = 2.0
 load_model = True
 
 
@@ -59,6 +59,7 @@ class DQNAgent:
 
         self.wanted_action = 7
         self.not_val_nr = 0
+        self.run = 0
     def get_latest_version(self):
         max_e = -1
         latest_model_path = None
@@ -390,9 +391,10 @@ class DQNAgent:
         if len(self.memory) > self.batch_size and self.e % 3 == 0:
             # self.replay(self.batch_size)
             self.executor.submit(self.replay, self.batch_size)
-        if self.e % 2_000 == 0 and self.e != 0:
+        if self.run % 2_000 == 0 and self.run != 0:
             self.save(f"models/dqn_model_v{version_nr}_{self.e}.h5")
         self.e += 1
+        self.run += 1
         # todo: reset env after a while, long enough?
         if self.e % 5_000 == 0:
             self.e = 0
