@@ -54,7 +54,7 @@ class DQNAgent:
         self.enemy_total_level_weight = 1
         self.player_total_level_weight = 10
         #self.enemy_total_experience_weight = 1
-        self.player_total_experience_weight = 0.01
+        self.player_total_experience_weight = 0.1
         self.total_items_weight = 1
 
         self.wanted_action = 7
