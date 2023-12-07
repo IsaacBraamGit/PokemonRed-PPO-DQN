@@ -317,7 +317,7 @@ class DQNAgent:
 
     def get_reward(self, state, next_state):
         # Enemy
-        enemy_health = next_state[0][17] - state[0][17]
+        enemy_health = min(next_state[0][17] - state[0][17],0)
         enemy_total_health = sum(next_state[0][i + 61] for i in range(0, 7, 5)) - sum(
             state[0][i + 61] for i in range(0, 7, 5))
         enemy_status = sum(next_state[0][i + 19] for i in range(7)) - sum(state[0][i + 19] for i in range(7))
@@ -328,7 +328,7 @@ class DQNAgent:
             state[0][i + 64] for i in range(0, 7, 5))
 
         # Player
-        player_health = next_state[0][0] - state[0][0]
+        player_health = min(next_state[0][0] - state[0][0],0)
         player_total_health = sum(next_state[0][i + 30] for i in range(0, 7, 5)) - sum(
             state[0][i + 30] for i in range(0, 7, 5))
         player_status = sum(next_state[0][i + 2] for i in range(7)) - sum(state[0][i + 2] for i in range(7))
@@ -345,22 +345,23 @@ class DQNAgent:
 
         score = (
                 - self.enemy_health_weight * enemy_health
-                - self.enemy_total_health_weight * enemy_total_health #todo: werkt niet
+                - self.enemy_total_health_weight * enemy_total_health #todo: werkt niet?
                 + self.enemy_status_weight * enemy_status #todo: werkt niet
-                - self.enemy_party_size_weight * enemy_party_size
+                - self.enemy_party_size_weight * enemy_party_size #todo: werkt niet
                 - self.enemy_total_level_weight * enemy_total_level
                 #- self.enemy_total_experience_weight * enemy_total_experience
-                #+ self.player_health_weight * player_health
-                + self.player_total_health_weight * player_total_health
+                + self.player_health_weight * player_health
+                #+ self.player_total_health_weight * player_total_health #todo: positive if you black out
                 - self.player_status_weight * player_status
                 + self.player_party_size_weight * player_party_size
 
                 + self.player_total_level_weight * player_total_level#todo: add measurement of how good pokemon is (base_stats? rank?)
                 + self.player_total_experience_weight * player_total_experience#other way around?
                 + self.total_items_weight * total_items
+                #todo: blacking out gives no loss
 
         )
-        if  score != 0:
+        if score != 0:
             print(score)
 
         print("score:", flush=True)
