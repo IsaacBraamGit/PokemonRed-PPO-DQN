@@ -9,7 +9,8 @@ import os
 import re
 import mappings
 
-version_nr = 2.0
+#version_nr = "test"
+version_nr = 2.1
 load_model = True
 
 
@@ -30,7 +31,7 @@ class DQNAgent:
         self.gamma = 0.7  # discount rate
         self.epsilon = 1  # exploration rate
         self.epsilon_min = 0.01
-        self.epsilon_decay = 0.9995
+        self.epsilon_decay = 0.9999
         self.learning_rate = 1
         self.batch_size = 64
 
@@ -351,8 +352,8 @@ class DQNAgent:
 
         score = (
                 - self.enemy_health_weight * enemy_health
-                - self.enemy_total_health_weight * enemy_total_health #todo: werkt niet?
-                + self.enemy_status_weight * enemy_status #todo: werkt niet
+                - self.enemy_total_health_weight * enemy_total_health #todo: werkt deze altijd goed?
+                + self.enemy_status_weight * enemy_status #todo: add ev/iv lowerings
                 - self.enemy_party_size_weight * enemy_party_size #todo: werkt niet
                 - self.enemy_total_level_weight * enemy_total_level
                 #- self.enemy_total_experience_weight * enemy_total_experience
