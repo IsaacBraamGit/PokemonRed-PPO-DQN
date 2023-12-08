@@ -364,7 +364,7 @@ class DQNAgent:
 
                 + self.player_total_level_weight * player_total_level#todo: add measurement of how good pokemon is (base_stats? rank?)
                 + self.player_total_experience_weight * player_total_experience
-                + self.total_items_weight * total_items
+                - self.total_items_weight * total_items
                 #todo: blacking out gives no loss
 
         )
