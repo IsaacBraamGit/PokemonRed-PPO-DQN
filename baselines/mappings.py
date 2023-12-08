@@ -998,6 +998,22 @@ class StateMapper:
             total_items += env.read_m(self.flattened_features[f"items_item_{i}_quantity"])
         return total_items
 
+    def get_base_stats(self, env, enemy=False):
+        if enemy:
+            base = "enemy"
+        else:
+            base = "player"
+        ev_iv_sum = 0
+        for i in range(1, 7):
+            ev_iv_sum += self.get_feature_value(env, f"{base}_pokemon{i}_attack_ev")
+            ev_iv_sum += self.get_feature_value(env, f"{base}_pokemon{i}_defense_ev")
+            ev_iv_sum += self.get_feature_value(env, f"{base}_pokemon{i}_speed_ev")
+            ev_iv_sum += self.get_feature_value(env, f"{base}_pokemon{i}_special_ev")
+            ev_iv_sum += self.get_feature_value(env, f"{base}_pokemon{i}_attack_defense_iv")
+            ev_iv_sum += self.get_feature_value(env, f"{base}_pokemon{i}_speed_special_iv")
+        return ev_iv_sum
+
+
 
 if __name__ == "__main__":
     state_mapper = StateMapper()

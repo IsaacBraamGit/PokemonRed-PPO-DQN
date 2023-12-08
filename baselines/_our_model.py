@@ -10,7 +10,7 @@ import re
 import mappings
 
 #version_nr = "test"
-version_nr = 2.1
+version_nr = 3.0
 load_model = True
 
 
@@ -47,20 +47,23 @@ class DQNAgent:
         self.enemy_health_weight = 1
         self.enemy_total_health_weight = 1
         self.player_health_weight = 1
-        self.player_total_health_weight = 1
+        self.player_total_health_weight = 0.1
         self.enemy_status_weight = 1
         self.player_status_weight = 1
         self.enemy_party_size_weight = 10
-        self.player_party_size_weight = 10
-        self.enemy_total_level_weight = 1
+        self.player_party_size_weight = 20
+        self.enemy_total_level_weight = 2
         self.player_total_level_weight = 10
-        #self.enemy_total_experience_weight = 1
+        self.enemy_total_experience_weight = 0
         self.player_total_experience_weight = 0.1
+        self.enemy_base_stats_weight = 1
+        self.player_base_stats_weight = 100
         self.total_items_weight = 1
 
         self.wanted_action = 7
         self.not_val_nr = 0
         self.run = 0
+
     def get_latest_version(self):
         max_e = -1
         latest_model_path = None
@@ -317,6 +320,12 @@ class DQNAgent:
         # Add number of items
         state.append(self.state_mapper.get_number_of_items(self.env))
 
+        # Add normalized EV and IV metric of player pokemon
+        state.append(self.state_mapper.get_base_stats(self.env) / 1000)
+
+        # Add normalized EV and IV metric of enemy pokemon
+        state.append(self.state_mapper.get_base_stats(self.env, enemy=True) / 1000)
+
         # Add positioning in menus
         state.extend(self.state_mapper.get_positional_data(self.env))
 
@@ -333,6 +342,7 @@ class DQNAgent:
             state[0][i + 63] for i in range(0, 7, 5))
         enemy_total_experience = sum(next_state[0][i + 64] for i in range(0, 7, 5)) - sum(
             state[0][i + 64] for i in range(0, 7, 5))
+        enemy_base_stats = next_state[0][108] - state[0][108]
 
         # Player
         player_health = min(next_state[0][0] - state[0][0],0)
@@ -344,6 +354,7 @@ class DQNAgent:
             state[0][i + 32] for i in range(0, 7, 5))
         player_total_experience = sum(next_state[0][i + 33] for i in range(0, 7, 5)) - sum(
             state[0][i + 33] for i in range(0, 7, 5))
+        player_base_stats = next_state[0][107] - state[0][107]
 
         total_items = next_state[0][106] - state[0][106]
 
@@ -356,15 +367,16 @@ class DQNAgent:
                 + self.enemy_status_weight * enemy_status #todo: add ev/iv lowerings
                 - self.enemy_party_size_weight * enemy_party_size #todo: werkt niet
                 - self.enemy_total_level_weight * enemy_total_level
-                #- self.enemy_total_experience_weight * enemy_total_experience
+                - self.enemy_total_experience_weight * enemy_total_experience  # not active now, weight = 0
+                - self.enemy_base_stats_weight * enemy_base_stats
                 + self.player_health_weight * player_health
                 #+ self.player_total_health_weight * player_total_health #todo: positive if you black out
                 - self.player_status_weight * player_status
                 + self.player_party_size_weight * player_party_size
-
                 + self.player_total_level_weight * player_total_level#todo: add measurement of how good pokemon is (base_stats? rank?)
+                + self.player_base_stats_weight * player_base_stats
                 + self.player_total_experience_weight * player_total_experience
-                - self.total_items_weight * total_items
+                + self.total_items_weight * total_items
                 #todo: blacking out gives no loss
 
         )
@@ -401,58 +413,3 @@ class DQNAgent:
             self.e = 0
             self.env.reset()
         print("e=", self.e, flush=True)
-
-    """
-def chose_action(env):
-    battle_status = env.read_m(0xD057)
-
-    # our first pokemon
-    player_pokemon_internal_id = env.read_m(0xCFC0)  # Player's Pokémon internal ID
-
-    our_lvl = env.read_m(0xD18C)
-    our_hp = env.read_m(0xD16D)
-
-    move1 = env.read_m(0xD173)  # Move 1
-    move2 = env.read_m(0xD174)  # Move 2
-    move3 = env.read_m(0xD175)  # Move 3
-    move4 = env.read_m(0xD176)  # Move 4
-
-    type1 = env.read_m(0xD170)  # Type 1
-    type2 = env.read_m(0xD171)  # Type 2
-
-    experience = env.read_m(0xD17B)  # Experience
-
-    pp_move1 = env.read_m(0xD188)  # PP Move 1
-    pp_move2 = env.read_m(0xD189)  # PP Move 2
-    pp_move3 = env.read_m(0xD18A)  # PP Move 3
-    pp_move4 = env.read_m(0xD18B)  # PP Move 4
-
-
-    max_hp = env.read_m(0xD18E)  # Max HP high byte
-
-    # openents pokemon:
-
-    enemy_pokemon_internal_id = env.read_m(0xCFD8)  # Enemy's Pokémon internal ID
-
-    enemy_lvl = env.read_m(0xCFF3)  # Enemy Level
-    enemy_hp = env.read_m(0xCFE7)  # Enemy's HP
-    enemy_name = env.read_m(0xCFE4)  # Enemy's Name
-
-    enemy_type1 = env.read_m(0xCFEA)  # Enemy's Type 1
-    enemy_type2 = env.read_m(0xCFEB)  # Enemy's Type 2
-
-    enemy_catch_rate = env.read_m(0xD007)  # Enemy's Catch Rate
-
-    # This is the same address as before, so I'm not sure if you wanted to duplicate it.
-    # If it is the enemy's experience it should be a different address.
-    enemy_experience = env.read_m(0xD17B)  # Experience (Same as previous, possibly a mistake?)
-
-    enemy_max_hp = env.read_m(0xCFF5)  # Enemy's Max HP
-
-    party_count = env.read_m(0xD163)
-
-
-
-
-    return 4
-"""
