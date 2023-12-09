@@ -4,7 +4,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 # Path to the log file
-file_path = 'models/log_dqn_model_v2.0.txt'
+model = "random"
+file_path = f'models/log_dqn_model_v{model}.txt'
 
 # Function to combine lines into entries
 def combine_lines_into_entries(lines):
