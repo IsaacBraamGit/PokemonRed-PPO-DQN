@@ -1,4 +1,5 @@
 import numpy as np
+import pickle
 from collections import deque
 from keras.models import Sequential
 from keras.layers import Dense
@@ -14,6 +15,27 @@ version_nr = 3.0
 load_model = True
 
 
+class ReplayBuffer:
+    def __init__(self, max_size, file_path=None):
+        self.buffer = deque(maxlen=max_size)
+        if file_path is not None:
+            self.load_from_file(file_path)
+
+    def add(self, experience):
+        self.buffer.append(experience)
+
+    def sample(self, batch_size):
+        return random.sample(self.buffer, batch_size)
+
+    def save_to_file(self, file_path):
+        with open(file_path, 'wb') as file:
+            pickle.dump(self.buffer, file)
+
+    def load_from_file(self, file_path):
+        with open(file_path, 'rb') as file:
+            self.buffer = pickle.load(file)
+
+
 def append_to_file(file_path, line):
     with open(file_path, "a") as file:
         file.write(line + "\n")
@@ -27,7 +49,7 @@ class DQNAgent:
         self.state_mapper = mappings.StateMapper()
         self.action_size = self.action_mapper.action_size
         self.memory_total = []
-        self.memory = deque(maxlen=10_000)
+        self.memory = ReplayBuffer(max_size=1_000_000, file_path="models/replay_buffer.pkl")
         self.gamma = 0.7  # discount rate
         self.epsilon = 1  # exploration rate
         self.epsilon_min = 0.01
@@ -99,11 +121,9 @@ class DQNAgent:
             self.target_model.set_weights(self.model.get_weights())
 
     def remember(self, state, action, reward, next_state, done):
-
-        self.memory.append((state, action, reward, next_state, done))
-
-        line = str((self.e, state, action, reward, next_state, done,self.epsilon))
-        append_to_file(self.file_path, line)
+        self.memory.add((state, action, reward, next_state, done))
+        if self.e % 100 == 0:
+            self.memory.save_to_file("models/replay_buffer.pkl")
 
     def act(self, state, test=False):
         if np.random.rand() <= self.epsilon:
@@ -167,7 +187,7 @@ class DQNAgent:
                 self.env, 'in_battle_type_of_battle') == 1
 
     def replay(self, batch_size):
-        minibatch = random.sample(self.memory, batch_size)
+        minibatch = self.memory.sample(batch_size)
 
         # Extract states and next_states from minibatch
         states = np.array([t[0][0] for t in minibatch])
@@ -401,7 +421,7 @@ class DQNAgent:
         if done:
             self.save(f"models/dqn_model_v{version_nr}_{self.e}.h5")
 
-        if len(self.memory) > self.batch_size and self.e % 3 == 0:
+        if len(self.memory.buffer) > self.batch_size and self.e % 3 == 0:
             # self.replay(self.batch_size)
             self.executor.submit(self.replay, self.batch_size)
         if self.run % 2_000 == 0 and self.run != 0:
