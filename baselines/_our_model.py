@@ -11,11 +11,8 @@ import re
 import mappings
 
 #version_nr = "test"
-<<<<<<< Updated upstream
 version_nr = 3.0
-=======
-version_nr = "RANDOM"
->>>>>>> Stashed changes
+
 load_model = True
 
 
