@@ -11,7 +11,11 @@ import re
 import mappings
 
 #version_nr = "test"
+<<<<<<< Updated upstream
 version_nr = 3.0
+=======
+version_nr = "RANDOM"
+>>>>>>> Stashed changes
 load_model = True
 
 
@@ -53,7 +57,7 @@ class DQNAgent:
         self.gamma = 0.7  # discount rate
         self.epsilon = 1  # exploration rate
         self.epsilon_min = 0.01
-        self.epsilon_decay = 0.9999
+        self.epsilon_decay = 1
         self.learning_rate = 1
         self.batch_size = 64
 
@@ -398,7 +402,6 @@ class DQNAgent:
                 + self.player_total_experience_weight * player_total_experience
                 + self.total_items_weight * total_items
                 #todo: blacking out gives no loss
-
         )
         if score != 0:
             print(score)
