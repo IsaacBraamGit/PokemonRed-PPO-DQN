@@ -10,7 +10,7 @@ import re
 import mappings
 
 #version_nr = "test"
-version_nr = 2.1
+version_nr = 2.0
 load_model = True
 
 
@@ -29,7 +29,7 @@ class DQNAgent:
         self.memory_total = []
         self.memory = deque(maxlen=10_000)
         self.gamma = 0.7  # discount rate
-        self.epsilon = 1  # exploration rate
+        self.epsilon = 0.3 # exploration rate
         self.epsilon_min = 0.01
         self.epsilon_decay = 0.9999
         self.learning_rate = 1
