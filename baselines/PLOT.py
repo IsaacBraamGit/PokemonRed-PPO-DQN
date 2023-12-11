@@ -1,11 +1,8 @@
 import matplotlib.pyplot as plt
 import numpy as np
 
-import matplotlib.pyplot as plt
-
-# Path to the log file
-model = "random"
-file_path = f'models/log_dqn_model_v{model}.txt'
+# Models to be plotted
+models = [4.0]
 
 # Function to combine lines into entries
 def combine_lines_into_entries(lines):
@@ -36,39 +33,48 @@ def extract_reward_from_entry(entry):
     parts.append(current_part.strip())
     if len(parts) > 3:
         try:
+            if parts[3] == None:
+                return 0
             return float(parts[3])
         except ValueError:
-            return None
+            return 0
 
-
-with open(file_path, 'r') as file:
-    lines = file.readlines()
-
-# Process the data
-entries = combine_lines_into_entries(lines)
-rewards = [extract_reward_from_entry(entry) for entry in entries]
-
-# Plotting the rewards
-plt.figure(figsize=(12, 6))
-plt.plot(rewards, label='Rewards')
-plt.xlabel('Episodes')
-plt.ylabel('Reward')
-plt.title('Rewards Over Episodes')
-plt.legend()
-plt.savefig("rewards")
-plt.show()
-
+# Function for moving average
 def moving_average(data, window_size):
     """ Calculate the moving average over a specific window size. """
     return np.convolve(data, np.ones(window_size)/window_size, mode='valid')
 
-smoothed = moving_average(rewards, 5000)
+# Set up the plot
+# Collect all reward lists
+all_rewards = []
 
+# Set up the plot
 plt.figure(figsize=(12, 6))
-plt.plot(smoothed, label='Rewards')
+
+# Loop through each model
+for model in models:
+    file_path = f'models/log_dqn_model_v{model}.txt'
+
+    with open(file_path, 'r') as file:
+        lines = file.readlines()
+
+    # Process the data
+    entries = combine_lines_into_entries(lines)
+    rewards = [extract_reward_from_entry(entry) for entry in entries]
+    all_rewards.append(rewards)
+    reward = [r for r in rewards if isinstance(r,float)]
+    # Calculate smoothed rewards
+    #smoothed = moving_average(rewards, 500)
+    smoothed = [sum(filter(None, reward[n:n+1000]))/1000 for n in range(len(rewards))]
+    #smoothed = [r/100 for r in smoothed if isinstance(r,int)]
+
+    # Plotting the rewards
+    plt.plot(smoothed, label=f'Model version {model}')
+
+
+# Finalizing the plot
 plt.xlabel('Episodes')
 plt.ylabel('Reward')
-plt.title('Smoothed Rewards Over Episodes')
+plt.title('Smoothed Rewards Over Episodes for Multiple Models')
 plt.legend()
-plt.savefig("smoothed rewards")
 plt.show()

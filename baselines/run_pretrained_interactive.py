@@ -13,12 +13,18 @@ import time
 OUR_SMALL_AGENT = True
 pokemon_caught = 1
 
+file_path_ppo = f"models/log_ppo_dqnv1.txt"
 def make_env(env_conf, seed=0):
     def _init():
         return RedGymEnv(env_conf)
     set_random_seed(seed)
     return _init
 
+
+
+def append_to_file(file_path, line):
+    with open(file_path, "a") as file:
+        file.write(line + "\n")
 
 if __name__ == '__main__':
     sess_path = Path(f'isaac_session')
@@ -60,6 +66,7 @@ if __name__ == '__main__':
                     env.wait(360)
                 action, action_list = small_agent.act(state, False)
                 _, rewards, terminated, truncated, _, pokemon_caught = perform_actions_in_env(action,action_list, env, small_agent, pokemon_caught)
+                append_to_file(file_path_ppo, str((rewards, action_list)))
                 # TODO think about how to handle rewards to compare to the big model
                 next_state = small_agent.get_state()
                 small_agent.learn(action, terminated, truncated, state, next_state)
@@ -68,9 +75,10 @@ if __name__ == '__main__':
             else:
                 action_big_model, _states = model.predict(obs)
                 obs, rewards, terminated, truncated, info = env.step(action_big_model)
+                append_to_file(file_path_ppo, str(rewards))
                 env.render()
 
-            if step % 100_000 == 0 and step != 0:
+            if step % 5_000 == 0 and step != 0:
                 env.reset()
             if truncated:
                 break
