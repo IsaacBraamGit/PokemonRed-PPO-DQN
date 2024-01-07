@@ -10,7 +10,7 @@ import re
 import mappings
 
 #version_nr = "test"
-version_nr = 3.1
+version_nr = 3.2
 load_model = True
 
 
@@ -29,7 +29,7 @@ class DQNAgent:
         self.memory_total = []
         self.memory = deque(maxlen=10_000)
         self.gamma = 0.7  # discount rate
-        self.epsilon = 0.3 # exploration rate
+        self.epsilon = 0.9 # exploration rate
         self.epsilon_min = 0.01
         self.epsilon_decay = 0.9999
         self.learning_rate = 1
@@ -105,6 +105,9 @@ class DQNAgent:
     def act(self, state, test=False):
         if np.random.rand() <= self.epsilon:
             action = random.randrange(self.action_size)
+            while not self.get_action_validity(action):
+                action = random.randrange(self.action_size)
+
         else:
             act_values = self.model.predict(state, verbose=0)
             sorted_actions = np.argsort(-act_values[0])
