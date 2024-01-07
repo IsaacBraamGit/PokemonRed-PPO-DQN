@@ -10,7 +10,7 @@ import re
 import mappings
 
 #version_nr = "test"
-version_nr = 2.0
+version_nr = 3.1
 load_model = True
 
 
@@ -107,7 +107,16 @@ class DQNAgent:
             action = random.randrange(self.action_size)
         else:
             act_values = self.model.predict(state, verbose=0)
-            action = np.argmax(act_values[0])
+            sorted_actions = np.argsort(-act_values[0])
+
+            for potential_action in sorted_actions:
+                if self.get_action_validity(potential_action):
+                    action = potential_action
+                    self.wanted_action = action
+                    break
+            else:
+                action = 12  # default action if none are valid
+
         print(state)
 
         if test:
@@ -118,11 +127,6 @@ class DQNAgent:
             action = 11
 
 
-        print("w_act: ", action)
-        self.wanted_action = action
-        if not self.get_action_validity(action):
-            print("not valid")
-            action = 12  # pass if not valid
 
 
 
