@@ -115,9 +115,10 @@ class DQNAgent:
             for potential_action in sorted_actions:
                 if self.get_action_validity(potential_action):
                     action = potential_action
-                    self.wanted_action = action
+
                     break
             else:
+                raise Exception ("no valid action")
                 action = 12  # default action if none are valid
 
         print(state)
@@ -125,6 +126,10 @@ class DQNAgent:
         if test:
             user_input = input("Please enter a number: ")
             action = int(user_input)
+            while not self.get_action_validity(action):
+                print('There is a time and place for everything, but cant do that now')
+                user_input = input("Please enter a number: ")
+                action = int(user_input)
 
         if self.e < 2:
             action = 11
@@ -147,7 +152,7 @@ class DQNAgent:
             self.env.reset()
             return 12, [7]
         print("action_list", action_list)
-
+        self.wanted_action = action
         return action, action_list
 
     def get_action_validity(self, action: int) -> bool:
