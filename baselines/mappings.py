@@ -18,6 +18,7 @@ class ActionMapper:
         self.fight_menu = 1
         self.pokemon_menu = 1
         self.bag_menu = 1
+        self.state_mapper = StateMapper()
 
         self.actions = {
             0: ["m1", 4, "f1", 4],  # attack 1
@@ -49,8 +50,18 @@ class ActionMapper:
         self.menu = 1
         self.bag_menu = 1
 
-    def get_action_sequence(self, action, state):
-
+    def get_action_sequence(self, action, state, env):
+        in_text, in_menu, slotbit1, slotbit2 = self.state_mapper.get_positional_data(env)
+        print("SLOTBITS")
+        print(slotbit1)
+        print(slotbit2)
+        #self.menu = slotbit1*2 + slotbit2 + 1
+        print(in_menu)
+        print(self.menu)
+        if slotbit1 == 0 and slotbit2 == 0 and in_menu == 1:
+            self.menu = 1
+        if slotbit1 == 1 and slotbit2 == 0 and in_menu == 1:
+            self.menu = 0
         action_list = self.actions[action]
         # dead
         new_list = []

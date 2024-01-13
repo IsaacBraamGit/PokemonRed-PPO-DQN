@@ -85,6 +85,7 @@ def perform_actions_in_env(overall_action,action_list, env, small_agent, pokemon
                 pokemon_named = True
         battle_status = env.read_m(0xD057)
         obs, rewards, terminated, truncated, info = env.step(4)
+        env.wait(50)
         state = small_agent.get_state()
         menu, slotbit2, health = state[0][-3], state[0][-1], state[0][0]
     return obs, rewards, terminated, truncated, info, pokemon_caught

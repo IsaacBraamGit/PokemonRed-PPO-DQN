@@ -10,7 +10,7 @@ import re
 import mappings
 
 #version_nr = "test"
-version_nr = 3.2
+version_nr = 4.0
 load_model = True
 
 
@@ -29,7 +29,7 @@ class DQNAgent:
         self.memory_total = []
         self.memory = deque(maxlen=10_000)
         self.gamma = 0.7  # discount rate
-        self.epsilon = 0.9 # exploration rate
+        self.epsilon = 1.0 # exploration rate
         self.epsilon_min = 0.01
         self.epsilon_decay = 0.9999
         self.learning_rate = 1
@@ -139,7 +139,7 @@ class DQNAgent:
 
 
         print("action:", action)
-        action_list = self.action_mapper.get_action_sequence(action, state)
+        action_list = self.action_mapper.get_action_sequence(action, state, self.env)
 
         if action_list == [7]:
             self.not_val_nr += 1

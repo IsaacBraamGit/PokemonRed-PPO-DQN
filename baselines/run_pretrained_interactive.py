@@ -14,7 +14,7 @@ OUR_SMALL_AGENT = True
 pokemon_caught = 1
 
 
-file_path_ppo = f"models/log_ppo_dqn.txt"
+file_path_ppo = f"models/log_ppo_dqn_official_test 4.0.txt"
 
 
 def make_env(env_conf, seed=0):
