@@ -10,7 +10,7 @@ import re
 import mappings
 
 #version_nr = "test"
-version_nr = 4.0
+version_nr = 4.1
 load_model = True
 
 
@@ -31,7 +31,7 @@ class DQNAgent:
         self.gamma = 0.7  # discount rate
         self.epsilon = 1.0 # exploration rate
         self.epsilon_min = 0.01
-        self.epsilon_decay = 0.9999
+        self.epsilon_decay = 0.9995
         self.learning_rate = 1
         self.batch_size = 64
 
@@ -404,12 +404,12 @@ class DQNAgent:
         if len(self.memory) > self.batch_size and self.e % 3 == 0:
             # self.replay(self.batch_size)
             self.executor.submit(self.replay, self.batch_size)
-        if self.run % 2_000 == 0 and self.run != 0:
+        if self.run % 500 == 0 and self.run != 0:
             self.save(f"models/dqn_model_v{version_nr}_{self.e}.h5")
         self.e += 1
         self.run += 1
         # todo: reset env after a while, long enough?
-        if self.e % 5_000 == 0:
+        if self.e % 500 == 0:
             self.e = 0
             self.env.reset()
         print("e=", self.e, flush=True)

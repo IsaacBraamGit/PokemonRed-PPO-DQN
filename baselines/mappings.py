@@ -52,16 +52,27 @@ class ActionMapper:
 
     def get_action_sequence(self, action, state, env):
         in_text, in_menu, slotbit1, slotbit2 = self.state_mapper.get_positional_data(env)
-        print("SLOTBITS")
-        print(slotbit1)
-        print(slotbit2)
-        #self.menu = slotbit1*2 + slotbit2 + 1
-        print(in_menu)
-        print(self.menu)
+
         if slotbit1 == 0 and slotbit2 == 0 and in_menu == 1:
             self.menu = 1
         if slotbit1 == 1 and slotbit2 == 0 and in_menu == 1:
             self.menu = 0
+
+        if slotbit1 == 0 and slotbit2 == 1 and in_menu == 1:
+            self.menu = 2
+        if slotbit1 == 1 and slotbit2 == 1 and in_menu == 1:
+            self.menu = 3
+
+
+        y_pos = env.read_m(0xCC26)
+        x_pos = env.read_m(0xCC25)
+        extra = env.read_m(0xCC24)
+        if x_pos == 0 and extra == 1:
+            if -1 < y_pos < 6:
+             self.pokemon_menu == y_pos + 1
+
+        print("menu")
+        print(self.menu)
         action_list = self.actions[action]
         # dead
         new_list = []

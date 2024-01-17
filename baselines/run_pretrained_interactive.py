@@ -82,6 +82,7 @@ if __name__ == '__main__':
                 append_to_file(file_path_ppo,str(rewards))
                 env.render()
 
+
             if step % 100_000 == 0 and step != 0:
                 env.reset()
             if truncated:
@@ -97,4 +98,12 @@ if __name__ == '__main__':
         else:
             obs, rewards, terminated, truncated, info = env.step(action)
         env.render()
+        y_pos = env.read_m(0xCC26)
+        x_pos = env.read_m(0xCC25)
+        extra = env.read_m(0xCC24)
+        print("POS x,y")
+        print(x_pos)
+        print(y_pos)
+        print(extra)
+
     env.close()

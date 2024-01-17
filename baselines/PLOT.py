@@ -4,7 +4,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 # Path to the log file
-file_path = 'models/log_dqn_model_v2.0.txt'
+file_path = 'models/log_dqn_model_v4.0.txt'
 
 # Function to combine lines into entries
 def combine_lines_into_entries(lines):
@@ -61,7 +61,7 @@ def moving_average(data, window_size):
     """ Calculate the moving average over a specific window size. """
     return np.convolve(data, np.ones(window_size)/window_size, mode='valid')
 
-smoothed = moving_average(rewards, 5000)
+smoothed = moving_average(rewards, 50)
 
 plt.figure(figsize=(12, 6))
 plt.plot(smoothed, label='Rewards')
