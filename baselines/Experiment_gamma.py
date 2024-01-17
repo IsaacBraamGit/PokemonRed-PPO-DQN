@@ -10,15 +10,16 @@ from stable_baselines3.common.utils import set_random_seed
 from stable_baselines3.common.callbacks import CheckpointCallback
 from util import perform_actions_in_env
 import time
+
 runs = 3
 for run in range(runs):
-    lrs = [0.0001,0.001,0.01]
+    gammas = [0.5, 1.0, 1.5]
 
-    for lr in lrs:
+    for gamma in gammas:
         OUR_SMALL_AGENT = True
         pokemon_caught = 1
 
-        file_path_ppo = f"models/log_ppo_dqn_official_test_run_{run}_lr_{lr}.txt"
+        file_path_ppo = f"models/log_ppo_dqn_official_test_run_{run}_gamma_{gamma}.txt"
 
 
         def make_env(env_conf, seed=0):
@@ -46,7 +47,7 @@ for run in range(runs):
 
         num_cpu = 1  # 64 #46 # Also sets the number of episodes per training iteration
         env = make_env(env_config)()  # SubprocVecEnv([make_env(i, env_config) for i in range(num_cpu)])
-        small_agent = _our_model.DQNAgent(env, f"lr{lr}_run_{run}",lr,0.9995, 0.7)
+        small_agent = _our_model.DQNAgent(env, f"gamma{gamma}_run_{run}", 1, 0.9995, gamma)
         file_name = 'session_4da05e87_main_good/poke_439746560_steps.zip'
 
         print('\nloading checkpoint')
@@ -72,7 +73,8 @@ for run in range(runs):
                         env.step(4)
                         env.wait(360)
                     action, action_list = small_agent.act(state, False)
-                    _, rewards, terminated, truncated, _, pokemon_caught = perform_actions_in_env(action, action_list, env,
+                    _, rewards, terminated, truncated, _, pokemon_caught = perform_actions_in_env(action, action_list,
+                                                                                                  env,
                                                                                                   small_agent,
                                                                                                   pokemon_caught)
                     append_to_file(file_path_ppo, str((rewards, action_list)))
