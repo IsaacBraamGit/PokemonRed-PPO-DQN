@@ -19,7 +19,7 @@ def perform_actions_in_env(overall_action,action_list, env, small_agent, pokemon
     for action in action_list:
         env.wait(50)
         obs, rewards, terminated, truncated, info = env.step(action)
-    env.wait(100)
+    env.wait(50)
 
     if action_list[0] == 7:
         obs, rewards, terminated, truncated, info = env.step(7)

@@ -10,42 +10,43 @@ from stable_baselines3.common.utils import set_random_seed
 from stable_baselines3.common.callbacks import CheckpointCallback
 from util import perform_actions_in_env
 import time
-OUR_SMALL_AGENT = True
-pokemon_caught = 1
+lrs = [0.0001,0.001,0.01]
+
+for lr in lrs:
+    OUR_SMALL_AGENT = True
+    pokemon_caught = 1
+
+    file_path_ppo = f"models/log_ppo_dqn_official_test_lr_{lr}.txt"
 
 
-file_path_ppo = f"models/log_ppo_dqn_official_test 4.0.txt"
+    def make_env(env_conf, seed=0):
+        def _init():
+            return RedGymEnv(env_conf)
+
+        set_random_seed(seed)
+        return _init
 
 
-def make_env(env_conf, seed=0):
-    def _init():
-        return RedGymEnv(env_conf)
-
-    set_random_seed(seed)
-    return _init
+    def append_to_file(file_path, line):
+        with open(file_path, "a") as file:
+            file.write(line + "\n")
 
 
-def append_to_file(file_path, line):
-    with open(file_path, "a") as file:
-        file.write(line + "\n")
-
-
-if __name__ == '__main__':
     sess_path = Path(f'isaac_session')
-    ep_length = 2**230000
+    ep_length = 2 ** 230000
 
     env_config = {
-                'headless': False, 'save_final_state': False, 'early_stop': False,
-                'action_freq': 24, 'init_state': '../has_pokedex_nballs.state', 'max_steps': ep_length,
-                'print_rewards': False, 'save_video': False, 'fast_video': False, 'session_path': sess_path,
-                'gb_path': '../PokemonRed.gb', 'debug': False, 'sim_frame_dist': 2_000_000.0, 'extra_buttons': True
-            }
+        'headless': False, 'save_final_state': False, 'early_stop': False,
+        'action_freq': 24, 'init_state': '../has_pokedex_nballs.state', 'max_steps': ep_length,
+        'print_rewards': False, 'save_video': False, 'fast_video': False, 'session_path': sess_path,
+        'gb_path': '../PokemonRed.gb', 'debug': False, 'sim_frame_dist': 2_000_000.0, 'extra_buttons': True
+    }
 
     num_cpu = 1  # 64 #46 # Also sets the number of episodes per training iteration
     env = make_env(env_config)()  # SubprocVecEnv([make_env(i, env_config) for i in range(num_cpu)])
-    small_agent = _our_model.DQNAgent(env, "5.0", 1, 0.9995, 0.7)
+    small_agent = _our_model.DQNAgent(env, f"lr{lr}",lr,0.9995, 0.7)
     file_name = 'session_4da05e87_main_good/poke_439746560_steps.zip'
-    
+
     print('\nloading checkpoint')
     model = PPO.load(file_name, env=env, custom_objects={'lr_schedule': 0, 'clip_range': 0})
 
@@ -69,8 +70,10 @@ if __name__ == '__main__':
                     env.step(4)
                     env.wait(360)
                 action, action_list = small_agent.act(state, False)
-                _, rewards, terminated, truncated, _, pokemon_caught = perform_actions_in_env(action,action_list, env, small_agent, pokemon_caught)
-                append_to_file(file_path_ppo,str((rewards,action_list)))
+                _, rewards, terminated, truncated, _, pokemon_caught = perform_actions_in_env(action, action_list, env,
+                                                                                              small_agent,
+                                                                                              pokemon_caught)
+                append_to_file(file_path_ppo, str((rewards, action_list)))
                 # TODO think about how to handle rewards to compare to the big model
                 next_state = small_agent.get_state()
                 small_agent.learn(action, terminated, truncated, state, next_state)
@@ -79,12 +82,12 @@ if __name__ == '__main__':
             else:
                 action_big_model, _states = model.predict(obs)
                 obs, rewards, terminated, truncated, info = env.step(action_big_model)
-                append_to_file(file_path_ppo,str(rewards))
+                append_to_file(file_path_ppo, str(rewards))
                 env.render()
 
-
-            if step % 100_000 == 0 and step != 0:
+            if step % 10_000 == 0 and step != 0:
                 env.reset()
+                break
             if truncated:
                 break
 

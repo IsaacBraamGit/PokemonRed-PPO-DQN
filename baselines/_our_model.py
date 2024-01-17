@@ -10,7 +10,6 @@ import re
 import mappings
 
 #version_nr = "test"
-version_nr = 4.1
 load_model = True
 
 
@@ -20,9 +19,9 @@ def append_to_file(file_path, line):
 
 
 class DQNAgent:
-    def __init__(self, env):
+    def __init__(self, env, version_number, lr, epsilon_decay, gamma):
         self.executor = ThreadPoolExecutor(max_workers=5)
-
+        self.version_nr = version_number
         self.action_mapper = mappings.ActionMapper()
         self.state_mapper = mappings.StateMapper()
         self.action_size = self.action_mapper.action_size
@@ -32,7 +31,7 @@ class DQNAgent:
         self.epsilon = 1.0 # exploration rate
         self.epsilon_min = 0.01
         self.epsilon_decay = 0.9995
-        self.learning_rate = 1
+        self.learning_rate = lr
         self.batch_size = 64
 
         self.env = env
@@ -41,7 +40,7 @@ class DQNAgent:
 
         self.model = self.load()
         self.target_model = self._build_target_model()
-        self.file_path = f"models/log_dqn_model_v{version_nr}.txt"  # Path to your log file
+        self.file_path = f"models/log_dqn_model_v{self.version_nr}.txt"  # Path to your log file
 
         # todo: set reward weights
         self.enemy_health_weight = 1
@@ -67,7 +66,7 @@ class DQNAgent:
 
         # Iterate over files in the model directory
         for filename in os.listdir("models"):
-            model_pattern = re.compile(rf"dqn_model_v{version_nr}_(\d+)\.h5")
+            model_pattern = re.compile(rf"dqn_model_v{self.version_nr}_(\d+)\.h5")
             match = model_pattern.match(filename)
             if match:
                 e = int(match.group(1))
@@ -399,13 +398,13 @@ class DQNAgent:
 
         # state = next_state
         if done:
-            self.save(f"models/dqn_model_v{version_nr}_{self.e}.h5")
+            self.save(f"models/dqn_model_v{self.version_nr}_{self.e}.h5")
 
         if len(self.memory) > self.batch_size and self.e % 3 == 0:
             # self.replay(self.batch_size)
             self.executor.submit(self.replay, self.batch_size)
         if self.run % 500 == 0 and self.run != 0:
-            self.save(f"models/dqn_model_v{version_nr}_{self.e}.h5")
+            self.save(f"models/dqn_model_v{self.version_nr}_{self.e}.h5")
         self.e += 1
         self.run += 1
         # todo: reset env after a while, long enough?
