@@ -67,7 +67,7 @@ class ActionMapper:
         y_pos = env.read_m(0xCC26)
         x_pos = env.read_m(0xCC25)
         extra = env.read_m(0xCC24)
-        if x_pos == 0 and extra == 1:
+        if x_pos == 0 and extra == 1 :
             if -1 < y_pos < 6:
                 self.pokemon_menu == y_pos + 1
 
@@ -76,19 +76,18 @@ class ActionMapper:
         action_list = self.actions[action]
         # dead
         new_list = []
-        if state[0][0] == 0:
-            if not 3 < action < 10:
-                return [7]
-            if action - 3 == self.pokemon_menu:
-                return [7]
-            action_list = action_list[2:]
         # killed opponent pokemon
-        if state[0][-1] == 0 and state[0][-2] == 0 and state[0][-3] == 0 and state[0][-4] == 0:
-            if not 3 < action < 10:
-                return [7]
-            if action - 3 == self.pokemon_menu:
-                return [7]
-            action_list = action_list[2:]
+        print(x_pos)
+        print(y_pos)
+        print(extra)
+        if x_pos == 0 and extra == 1:
+            if -1 < y_pos < 6:
+                self.pokemon_menu == y_pos + 1
+                if not 3 < action < 10:
+                    return [7]
+                if action - 3 == self.pokemon_menu:
+                    return [7]
+                action_list = action_list[2:]
 
         # transforms action string
 
