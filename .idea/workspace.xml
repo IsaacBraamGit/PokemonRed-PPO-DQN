@@ -6,7 +6,8 @@
   <component name="ChangeListManager">
     <list default="true" id="2af7fbdf-27c0-4c0b-a3d9-bb7b6f466e36" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/baselines/mappings.py" beforeDir="false" afterPath="$PROJECT_DIR$/baselines/mappings.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/baselines/models/log_dqn_model_vlr0.0001_run_0.txt" beforeDir="false" afterPath="$PROJECT_DIR$/baselines/models/log_dqn_model_vlr0.0001_run_0.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/baselines/models/log_ppo_dqn_official_test_run_0_lr_0.0001.txt" beforeDir="false" afterPath="$PROJECT_DIR$/baselines/models/log_ppo_dqn_official_test_run_0_lr_0.0001.txt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -200,7 +201,7 @@
       <workItem from="1701911066883" duration="7958000" />
       <workItem from="1705334458756" duration="594000" />
       <workItem from="1705365528055" duration="343000" />
-      <workItem from="1705411727386" duration="15354000" />
+      <workItem from="1705411727386" duration="16283000" />
     </task>
     <servers />
   </component>
@@ -231,7 +232,7 @@
     <SUITE FILE_PATH="coverage/PokemonRedExperiments_master$_our_model.coverage" NAME="_our_model Coverage Results" MODIFIED="1705147639857" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/baselines" />
     <SUITE FILE_PATH="coverage/PokemonRedExperiments_master$PLOT.coverage" NAME="PLOT Coverage Results" MODIFIED="1705507284178" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/baselines" />
     <SUITE FILE_PATH="coverage/PokemonRedExperiments_master$demo.coverage" NAME="demo Coverage Results" MODIFIED="1702293703772" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/baselines" />
-    <SUITE FILE_PATH="coverage/PokemonRedExperiments_master$Experiment_lr.coverage" NAME="Experiment_lr Coverage Results" MODIFIED="1705584216121" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/baselines" />
+    <SUITE FILE_PATH="coverage/PokemonRedExperiments_master$Experiment_lr.coverage" NAME="Experiment_lr Coverage Results" MODIFIED="1705584395587" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/baselines" />
     <SUITE FILE_PATH="coverage/PokemonRedExperiments_master$run_pretrained_interactive.coverage" NAME="run_pretrained_interactive Coverage Results" MODIFIED="1705502115222" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/baselines" />
     <SUITE FILE_PATH="coverage/PokemonRedExperiments_master$run_baseline_parallel_fast.coverage" NAME="run_baseline_parallel_fast Coverage Results" MODIFIED="1699471068449" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/baselines" />
     <SUITE FILE_PATH="coverage/PokemonRedExperiments_master$test.coverage" NAME="test Coverage Results" MODIFIED="1699709092279" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />

@@ -56,10 +56,10 @@ class ActionMapper:
         if slotbit1 == 0 and slotbit2 == 0 and in_menu == 1:
             self.menu = 1
         if slotbit1 == 1 and slotbit2 == 0 and in_menu == 1:
-            self.menu = 3
+            self.menu = 2
 
         if slotbit1 == 0 and slotbit2 == 1 and in_menu == 1:
-            self.menu = 2
+            self.menu = 3
         if slotbit1 == 1 and slotbit2 == 1 and in_menu == 1:
             self.menu = 4
 
