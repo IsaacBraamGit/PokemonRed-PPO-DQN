@@ -889,7 +889,6 @@ class StateMapper:
         return feature_value
 
     def get_current_pokemon(self, env, actmap) -> int:
-        return actmap.pokemon_menu
         for i in range(1, 7):
             same_nr = self.get_feature_value(env, "in_battle_player_pokemon_nr") == \
                       self.get_feature_value(env, f"player_pokemon{i}_pokemon_nr")

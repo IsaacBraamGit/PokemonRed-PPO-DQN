@@ -46,7 +46,7 @@ for run in range(runs):
 
         num_cpu = 1  # 64 #46 # Also sets the number of episodes per training iteration
         env = make_env(env_config)()  # SubprocVecEnv([make_env(i, env_config) for i in range(num_cpu)])
-        small_agent = _our_model.DQNAgent(env, f"lr{lr}_run_{run}",lr,0.9995, 0.7)
+        small_agent = _our_model.DQNAgent(env, f"lr{lr}_run_{run}",lr,0.999, 0.7)
         file_name = 'session_4da05e87_main_good/poke_439746560_steps.zip'
 
         print('\nloading checkpoint')
@@ -87,6 +87,8 @@ for run in range(runs):
                     append_to_file(file_path_ppo, str(rewards))
                     env.render()
 
+                if step % 10_000 == 0 and step != 0:
+                    env.reset()
                 if step % 100_000 == 0 and step != 0:
                     env.reset()
                     break

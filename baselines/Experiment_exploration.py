@@ -89,6 +89,8 @@ for run in range(runs):
                     append_to_file(file_path_ppo, str(rewards))
                     env.render()
 
+                if step % 10_000 == 0 and step != 0:
+                    env.reset()
                 if step % 100_000 == 0 and step != 0:
                     env.reset()
                     break
