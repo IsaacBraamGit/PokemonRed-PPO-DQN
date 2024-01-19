@@ -61,7 +61,7 @@ def moving_average(data, window_size):
     """ Calculate the moving average over a specific window size. """
     return np.convolve(data, np.ones(window_size)/window_size, mode='valid')
 
-smoothed = moving_average(rewards, 50)
+smoothed = moving_average(rewards, 1000)
 
 plt.figure(figsize=(12, 6))
 plt.plot(smoothed, label='Rewards')
