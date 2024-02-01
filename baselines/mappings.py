@@ -1,14 +1,14 @@
 import pandas as pd
 
 """
-valid_actions = [
-    WindowEvent.PRESS_ARROW_DOWN,
-    WindowEvent.PRESS_ARROW_LEFT,
-    WindowEvent.PRESS_ARROW_RIGHT,
-    WindowEvent.PRESS_ARROW_UP,
-    WindowEvent.PRESS_BUTTON_A,
-    WindowEvent.PRESS_BUTTON_B,
-]
+valid_actions:
+    PRESS_ARROW_DOWN,
+    PRESS_ARROW_LEFT,
+    PRESS_ARROW_RIGHT,
+    PRESS_ARROW_UP,
+    PRESS_BUTTON_A,
+    PRESS_BUTTON_B,
+
 """
 
 

@@ -22,7 +22,7 @@ for run in range(runs):
         file_path_ppo = f"models/log_ppo_dqn_official_test_run_{run}_exp_{exp}.txt"
 
 
-        def make_env(env_conf, seed=0):
+        def make_env(env_conf, seed=run+1):
             def _init():
                 return RedGymEnv(env_conf)
 
