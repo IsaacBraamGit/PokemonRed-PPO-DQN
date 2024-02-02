@@ -29,7 +29,7 @@ This project is an open invitation to enthusiasts and experts alike in the field
 
 - **Algorithm Development**: Help us refine our RL models, explore new algorithms, and push the limits of AI gameplay.
 - **Feature and Reward Engineering**: We have probably selected way to many features and reward compononents, but feel free to play around. In _our_model.py, the code of the DQN is visible.
-- **Testing and Benchmarking**: Play a critical role in evaluating our AI's performance and identifying areas for improvement.
+- **Testing and Benchmarking**: Play a role in evaluating our AI's performance and identifying areas for improvement.
 - **Cross-Domain Applications**: Explore how the strategies and techniques developed here can be applied to other domains and challenges.
 
 ## Acknowledgments
